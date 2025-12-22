@@ -13,7 +13,6 @@ return new class extends Migration
     {
         Schema::create('veterinarias', function (Blueprint $table) {
             $table->id();
-//            nombre direccion telefono email logo imagen descripcion estado color
             $table->string('nombre');
             $table->string('direccion')->nullable();
             $table->string('telefono')->nullable();

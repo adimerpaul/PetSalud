@@ -14,11 +14,6 @@ class User extends Authenticatable
 {
     use HasFactory, Notifiable, SoftDeletes, HasApiTokens, HasRoles;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
     protected $fillable = [
         'name',
         'username',
@@ -26,6 +21,7 @@ class User extends Authenticatable
         'avatar',
         'email',
         'password',
+        'veterinaria_id',
     ];
 
     /**
@@ -41,16 +37,15 @@ class User extends Authenticatable
         'updated_at',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
-    {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
+//    protected function casts(): array
+//    {
+//        return [
+//            'email_verified_at' => 'datetime',
+//            'password' => 'hashed',
+//        ];
+//    }
+//    veterinaria
+    function veterinaria(){
+        return $this->belongsTo(Veterinaria::class);
     }
 }
