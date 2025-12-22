@@ -144,7 +144,7 @@
             <q-icon name="dashboard" class="text-white"/>
           </q-item-section>
           <q-item-section>
-            <q-item-label class="text-white">Dashboard</q-item-label>
+            <q-item-label class="text-white">Principal</q-item-label>
           </q-item-section>
         </q-item>
 <!--        usuarios datos empresa mi cuenta-->

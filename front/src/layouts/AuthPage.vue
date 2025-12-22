@@ -226,7 +226,9 @@ export default {
       this.loading = true
       this.$axios.post('/register', this.reg)
         .then(r => this.saveSession(r.data.token, r.data.user))
-        .catch(() => this.$q.notify({ type: 'negative', message: 'Error al registrar' }))
+        .catch((e) => {
+          this.$alert.error(e?.response?.data?.message || 'Error al registrar usuario', 'Error')
+        })
         .finally(() => { this.loading = false })
     }
   }
