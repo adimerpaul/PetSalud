@@ -124,7 +124,7 @@ function login () {
       proxy.$store.permissions = (user.permissions || []).map(p => p.name)
 
       // nombre más coherente para Plaza
-      localStorage.setItem('tokenPlazaMovie', token)
+      localStorage.setItem('tokenPetSalud', token)
       localStorage.setItem('user', JSON.stringify(user))
 
       proxy.$alert.success('Bienvenido', user.name)
