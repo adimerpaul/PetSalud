@@ -17,10 +17,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/users/{user}', [UserController::class, 'update']);
     Route::put('/users/{user}/password', [UserController::class, 'updatePassword']);
     Route::delete('/users/{user}', [UserController::class, 'destroy']);
+    Route::post('/users/{user}/avatar', [UserController::class, 'updateAvatar']);
 
-    Route::get('/veterinarias', [VeterinariaController::class, 'index']);
-    Route::post('/veterinarias', [VeterinariaController::class, 'store']);
-    Route::put('/veterinarias/{veterinaria}', [VeterinariaController::class, 'update']);
-    Route::delete('/veterinarias/{veterinaria}', [VeterinariaController::class, 'destroy']);
+
+    Route::get('/veterinaria', [VeterinariaController::class, 'showMine']);
+    Route::put('/veterinaria', [VeterinariaController::class, 'updateMine']);
 });
 

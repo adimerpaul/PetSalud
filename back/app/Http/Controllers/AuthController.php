@@ -15,10 +15,19 @@ class AuthController extends Controller
         $request->validate([
             'veterinaria_nombre' => 'required|string|max:255',
             'name' => 'required|string|max:255',
-            'username' => 'required|string|max:100|unique:users,username',
+//            'username' => 'required|string|max:100|unique:users,username',
             'email' => 'nullable|email|unique:users,email',
             'password' => 'required|min:6',
         ]);
+
+        $existingVet = Veterinaria::where('nombre', $request->veterinaria_nombre)->first();
+        if ($existingVet) {
+            return response()->json(['message' => 'El nombre de la veterinaria ya está en uso'], 422);
+        }
+        $existingUser = User::where('username', $request->username)->first();
+        if ($existingUser) {
+            return response()->json(['message' => 'El nombre de usuario ya está en uso'], 422);
+        }
 
         DB::beginTransaction();
         try {
