@@ -17,8 +17,8 @@ return new class extends Migration
             $table->string('direccion')->nullable();
             $table->string('telefono')->nullable();
             $table->string('email')->nullable();
-            $table->string('logo')->nullable();
-            $table->string('imagen')->nullable();
+            $table->string('logo')->nullable()->default('defaultImage.png');
+            $table->string('imagen')->nullable()->default('defaultImage.png');
             $table->text('descripcion')->nullable();
             $table->string('estado')->default('Activo');
             $table->string('color')->nullable();

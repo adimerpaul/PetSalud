@@ -42,6 +42,7 @@ class AuthController extends Controller
                 'descripcion' => $request->veterinaria_descripcion,
                 'estado' => 'Activo',
                 'color' => $request->veterinaria_color,
+                'logo' => 'defaultImage.png',
             ]);
 
             $user = User::create([
@@ -54,7 +55,7 @@ class AuthController extends Controller
                 'avatar' => 'defaultAvatar.png',
             ]);
 
-            $user->load('veterinaria:id,nombre,color,estado');
+            $user->load('veterinaria');
 
             $token = $user->createToken('auth_token')->plainTextToken;
 
@@ -81,7 +82,7 @@ class AuthController extends Controller
         ]);
 
         $user = User::where('username', $request->username)
-            ->with('veterinaria:id,nombre,color,estado')
+            ->with('veterinaria')
             ->first();
 
         if (!$user || !Hash::check($request->password, $user->password)) {

@@ -26,7 +26,7 @@ class MascotaFactory extends Factory
             'edad' => $edadAnios . ' años',
             'senas_particulares' => $this->faker->optional(0.6)->sentence(3),
             'color' => $this->faker->randomElement($colores),
-            'photo' => $this->faker->randomElement(['defaultPet.jpg','defaultPet2.jpg','defaultPet3.jpg']),
+            'photo' => $this->faker->randomElement(['defaultPet.jpg','defaultPet.jpg','defaultPet.jpg']),
 
             // propietario
             'propietario_nombre' => $this->faker->name(),

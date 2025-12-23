@@ -6,6 +6,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\MascotaController;
 use App\Http\Controllers\VeterinariaController;
 use App\Http\Controllers\HistorialClinicoController;
+use App\Http\Controllers\ProductoController;
 
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
@@ -41,5 +42,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/mascotas/{id}/historiales', [HistorialClinicoController::class, 'index']);
     Route::post('/historiales', [HistorialClinicoController::class, 'store']);
     Route::get('/historiales/{id}/pdf', [HistorialClinicoController::class, 'pdf']);
+
+    Route::get('productos', [ProductoController::class, 'index']);
+    Route::post('productos', [ProductoController::class, 'store']);
+    Route::put('productos/{id}', [ProductoController::class, 'update']);
+    Route::delete('productos/{id}', [ProductoController::class, 'destroy']);
+    Route::post('productos/{id}/imagen', [ProductoController::class, 'imagen']);
 });
 

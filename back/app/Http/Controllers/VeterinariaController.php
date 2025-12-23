@@ -68,9 +68,9 @@ class VeterinariaController extends Controller
             'logo' => 'required|image|max:2048'
         ]);
 
-        if ($vet->logo) {
-            Storage::disk('public')->delete('veterinarias/' . $vet->logo);
-        }
+//        if ($vet->logo) {
+//            Storage::disk('public')->delete('veterinarias/' . $vet->logo);
+//        }
 
         $filename = uniqid('logo_') . '.' . $request->logo->extension();
         $request->logo->storeAs('veterinarias', $filename, 'public');
@@ -89,9 +89,9 @@ class VeterinariaController extends Controller
             'imagen' => 'required|image|max:4096'
         ]);
 
-        if ($vet->imagen) {
-            Storage::disk('public')->delete('veterinarias/' . $vet->imagen);
-        }
+//        if ($vet->imagen) {
+//            Storage::disk('public')->delete('veterinarias/' . $vet->imagen);
+//        }
 
         $filename = uniqid('img_') . '.' . $request->imagen->extension();
         $request->imagen->storeAs('veterinarias', $filename, 'public');

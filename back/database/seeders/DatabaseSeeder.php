@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Permission;
 
 class DatabaseSeeder extends Seeder
@@ -19,11 +20,11 @@ class DatabaseSeeder extends Seeder
             'direccion'   => 'Calle Principal 123',
             'telefono'    => '555-1234',
             'email'       => 'veteriaria@gmail.com',
-            'logo'        => 'defaultLogo.png',
+            'logo'        => 'defaultImage.png',
             'imagen'      => 'defaultImage.png',
             'descripcion' => 'La mejor veterinaria de la ciudad.',
             'estado'      => 'Activo',
-            'color'       => '#FF5733',
+            'color'       => '#5A4EF9',
         ]);
 
         $userAdmin = User::create([
@@ -63,9 +64,12 @@ class DatabaseSeeder extends Seeder
 //                'veterinaria_id',
 //            ];
 //        crear 10000 mascotas fake
-        \App\Models\Mascota::factory(10000)->create([
+        \App\Models\Mascota::factory(1)->create([
             'veterinaria_id' => $veterinaria->id,
         ]);
+//        productos_202512230511.sql
+        $productosSqlPath = database_path('seeders/productos_202512230511.sql');
+        DB::unprepared(file_get_contents($productosSqlPath));
 
         // --- Permisos básicos
 //        $permisos = [
