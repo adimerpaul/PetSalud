@@ -4,23 +4,23 @@
 
       <!-- HEADER -->
       <q-card-section class="row items-center">
-        <q-avatar color="primary" text-color="white" icon="business" />
+        <q-avatar color="primary" text-color="white" icon="business"/>
         <div class="q-ml-md">
           <div class="text-h6 text-weight-bold">Datos de Empresa</div>
           <div class="text-caption text-grey-7">
             Configuración de la veterinaria (solo administrador)
           </div>
         </div>
-        <q-space />
-        <q-btn icon="refresh" flat round @click="load" :loading="loading" />
-        <q-btn icon="save" color="positive" label="Guardar" no-caps @click="save" :loading="loading" />
+        <q-space/>
+        <q-btn icon="refresh" flat round @click="load" :loading="loading"/>
+        <q-btn icon="save" color="positive" label="Guardar" no-caps @click="save" :loading="loading"/>
       </q-card-section>
 
-      <q-separator />
+      <q-separator/>
 
       <q-card-section v-if="!isAdmin">
         <q-banner class="bg-orange-1 text-orange-10">
-          <q-icon name="lock" class="q-mr-sm" />
+          <q-icon name="lock" class="q-mr-sm"/>
           Solo el administrador puede acceder.
         </q-banner>
       </q-card-section>
@@ -30,14 +30,14 @@
 
           <!-- IZQUIERDA -->
           <div class="col-12 col-md-7">
-            <q-input v-model="veterinaria.nombre" label="Nombre" outlined dense />
-            <q-input v-model="veterinaria.direccion" label="Dirección" outlined dense />
+            <q-input v-model="veterinaria.nombre" label="Nombre" outlined dense/>
+            <q-input v-model="veterinaria.direccion" label="Dirección" outlined dense/>
             <div class="row q-col-gutter-md">
               <div class="col-6">
-                <q-input v-model="veterinaria.telefono" label="Teléfono" outlined dense />
+                <q-input v-model="veterinaria.telefono" label="Teléfono" outlined dense/>
               </div>
               <div class="col-6">
-                <q-input v-model="veterinaria.email" label="Email" outlined dense />
+                <q-input v-model="veterinaria.email" label="Email" outlined dense/>
               </div>
             </div>
             <q-input
@@ -47,7 +47,7 @@
               type="textarea"
               autogrow
             />
-            <q-color v-model="veterinaria.color" />
+            <q-color v-model="veterinaria.color"/>
           </div>
 
           <!-- DERECHA -->
@@ -62,7 +62,7 @@
                     :src="logoUrl"
                     fit="contain"
                   />
-                  <q-icon v-else name="pets" size="48px" />
+                  <q-icon v-else name="pets" size="48px"/>
                 </q-avatar>
 
                 <div class="q-mt-sm">
@@ -85,37 +85,37 @@
             </q-card>
 
             <!-- IMAGEN -->
-<!--            <q-card flat bordered>-->
-<!--              <q-card-section class="text-center">-->
-<!--                <q-img-->
-<!--                  v-if="veterinaria.imagen"-->
-<!--                  :src="imagenUrl"-->
-<!--                  style="height:140px"-->
-<!--                  fit="cover"-->
-<!--                  class="rounded-borders"-->
-<!--                />-->
-<!--                <q-banner v-else class="bg-grey-2 text-grey-7">-->
-<!--                  Sin imagen-->
-<!--                </q-banner>-->
+            <!--            <q-card flat bordered>-->
+            <!--              <q-card-section class="text-center">-->
+            <!--                <q-img-->
+            <!--                  v-if="veterinaria.imagen"-->
+            <!--                  :src="imagenUrl"-->
+            <!--                  style="height:140px"-->
+            <!--                  fit="cover"-->
+            <!--                  class="rounded-borders"-->
+            <!--                />-->
+            <!--                <q-banner v-else class="bg-grey-2 text-grey-7">-->
+            <!--                  Sin imagen-->
+            <!--                </q-banner>-->
 
-<!--                <div class="q-mt-sm">-->
-<!--                  <q-btn-->
-<!--                    outline-->
-<!--                    icon="image"-->
-<!--                    label="Cambiar imagen"-->
-<!--                    no-caps-->
-<!--                    @click="$refs.imagenInput.click()"-->
-<!--                  />-->
-<!--                  <input-->
-<!--                    ref="imagenInput"-->
-<!--                    type="file"-->
-<!--                    accept="image/*"-->
-<!--                    class="hidden"-->
-<!--                    @change="uploadImagen"-->
-<!--                  />-->
-<!--                </div>-->
-<!--              </q-card-section>-->
-<!--            </q-card>-->
+            <!--                <div class="q-mt-sm">-->
+            <!--                  <q-btn-->
+            <!--                    outline-->
+            <!--                    icon="image"-->
+            <!--                    label="Cambiar imagen"-->
+            <!--                    no-caps-->
+            <!--                    @click="$refs.imagenInput.click()"-->
+            <!--                  />-->
+            <!--                  <input-->
+            <!--                    ref="imagenInput"-->
+            <!--                    type="file"-->
+            <!--                    accept="image/*"-->
+            <!--                    class="hidden"-->
+            <!--                    @change="uploadImagen"-->
+            <!--                  />-->
+            <!--                </div>-->
+            <!--              </q-card-section>-->
+            <!--            </q-card>-->
 
           </div>
         </div>
@@ -125,44 +125,44 @@
 </template>
 
 <script>
-import { setCssVar } from 'quasar'
+import {setCssVar} from 'quasar'
 
 export default {
-  data () {
+  data() {
     return {
       loading: false,
       veterinaria: {}
     }
   },
   computed: {
-    isAdmin () {
+    isAdmin() {
       return ['admin', 'administrador'].includes(
         (this.$store.user?.role || '').toLowerCase()
       )
     },
-    logoUrl () {
+    logoUrl() {
       return this.veterinaria.logo
         ? `${this.$url}/../storage/veterinarias/${this.veterinaria.logo}`
         : ''
     },
-    imagenUrl () {
+    imagenUrl() {
       return this.veterinaria.imagen
         ? `${this.$url}/storage/veterinarias/${this.veterinaria.imagen}`
         : ''
     }
   },
-  mounted () {
+  mounted() {
     // if (this.isAdmin)
     this.load()
   },
   methods: {
-    load () {
+    load() {
       this.loading = true
       this.$axios.get('/veterinaria')
         .then(r => this.veterinaria = r.data || {})
         .finally(() => this.loading = false)
     },
-    save () {
+    save() {
       this.loading = true
       this.$axios.put('/veterinaria', this.veterinaria)
         .then(() => {
@@ -172,13 +172,19 @@ export default {
         })
         .finally(() => this.loading = false)
     },
-    uploadLogo (e) {
+    uploadLogo(e) {
       const fd = new FormData()
       fd.append('logo', e.target.files[0])
       this.$axios.post('/veterinaria/logo', fd)
-        .then(r => this.veterinaria = r.data)
+        .then(r => {
+          this.veterinaria = r.data
+          //   <q-img :src="`${$url}/../storage/veterinarias/${ $store.user?.veterinaria?.logo }`" width="64px" height="64px" fit="contain"
+          // v-if="$store.user?.veterinaria?.logo"
+          //   />
+          this.$store.user.veterinaria.logo = r.data.logo
+        })
     },
-    uploadImagen (e) {
+    uploadImagen(e) {
       const fd = new FormData()
       fd.append('imagen', e.target.files[0])
       this.$axios.post('/veterinaria/imagen', fd)

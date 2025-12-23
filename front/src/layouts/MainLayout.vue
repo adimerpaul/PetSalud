@@ -122,10 +122,14 @@
         <!-- BRAND -->
         <q-item-label header class="text-center q-pa-none q-pt-md">
           <q-avatar size="64px" class="q-mb-sm bg-white" rounded>
-            <q-img src="/logo.png" width="64px" height="64px" fit="contain" />
+<!--            <q-img src="/logo.png" width="64px" height="64px" fit="contain" />-->
+            <q-img :src="`${$url}/../storage/veterinarias/${ $store.user?.veterinaria?.logo }`" width="64px" height="64px" fit="contain"
+                   v-if="$store.user?.veterinaria?.logo"
+            />
           </q-avatar>
           <div class="text-weight-bold text-white">PetSalud</div>
           <div class="text-caption text-white">Sistema Veterinario</div>
+<!--          <pre>{{$store.user}}</pre>-->
         </q-item-label>
 
         <q-separator color="white" inset class="q-my-sm" />
@@ -170,6 +174,15 @@
           </q-item-section>
           <q-item-section>
             <q-item-label class="text-white">Mi Cuenta</q-item-label>
+          </q-item-section>
+        </q-item>
+<!--        prodcutos-->
+        <q-item dense to="/productos" exact clickable class="menu-item" active-class="menu-active" v-close-popup >
+          <q-item-section avatar>
+            <q-icon name="inventory_2" class="text-white"/>
+          </q-item-section>
+          <q-item-section>
+            <q-item-label class="text-white">Productos</q-item-label>
           </q-item-section>
         </q-item>
 <!--        mascotas-->
