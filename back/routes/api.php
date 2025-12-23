@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\MascotaController;
 use App\Http\Controllers\VeterinariaController;
 
 Route::post('/login', [AuthController::class, 'login']);
@@ -29,5 +30,11 @@ Route::middleware('auth:sanctum')->group(function () {
     // uploads
     Route::post('/veterinaria/logo', [VeterinariaController::class, 'uploadLogo']);
     Route::post('/veterinaria/imagen', [VeterinariaController::class, 'uploadImagen']);
+
+    Route::get('/mascotas', [MascotaController::class, 'index']);
+    Route::post('/mascotas', [MascotaController::class, 'store']);
+    Route::get('/mascotas/{mascota}', [MascotaController::class, 'show']);
+    Route::post('/mascotas/{mascota}', [MascotaController::class, 'update']); // para multipart (foto)
+    Route::delete('/mascotas/{mascota}', [MascotaController::class, 'destroy']);
 });
 
