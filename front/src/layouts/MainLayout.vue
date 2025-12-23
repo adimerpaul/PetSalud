@@ -57,15 +57,15 @@
           </q-item>
 
           <!-- CONTRASEÑA -->
-          <q-item clickable v-close-popup to="/mi-cuenta/password">
-            <q-item-section avatar>
-              <q-icon name="lock_reset" />
-            </q-item-section>
-            <q-item-section>
-              <q-item-label>Cambiar contraseña</q-item-label>
-              <q-item-label caption>Actualiza tu clave</q-item-label>
-            </q-item-section>
-          </q-item>
+<!--          <q-item clickable v-close-popup to="/mi-cuenta/password">-->
+<!--            <q-item-section avatar>-->
+<!--              <q-icon name="lock_reset" />-->
+<!--            </q-item-section>-->
+<!--            <q-item-section>-->
+<!--              <q-item-label>Cambiar contraseña</q-item-label>-->
+<!--              <q-item-label caption>Actualiza tu clave</q-item-label>-->
+<!--            </q-item-section>-->
+<!--          </q-item>-->
 
           <q-separator />
 
@@ -173,14 +173,14 @@
           </q-item-section>
         </q-item>
 <!--        cambiar contraseña-->
-        <q-item dense to="/mi-cuenta/password" exact clickable class="menu-item" active-class="menu-active" v-close-popup >
-          <q-item-section avatar>
-            <q-icon name="lock_reset" class="text-white"/>
-          </q-item-section>
-          <q-item-section>
-            <q-item-label class="text-white">Cambiar Contraseña</q-item-label>
-          </q-item-section>
-        </q-item>
+<!--        <q-item dense to="/mi-cuenta/password" exact clickable class="menu-item" active-class="menu-active" v-close-popup >-->
+<!--          <q-item-section avatar>-->
+<!--            <q-icon name="lock_reset" class="text-white"/>-->
+<!--          </q-item-section>-->
+<!--          <q-item-section>-->
+<!--            <q-item-label class="text-white">Cambiar Contraseña</q-item-label>-->
+<!--          </q-item-section>-->
+<!--        </q-item>-->
 
 <!--        &lt;!&ndash; ====== ADMINISTRACIÓN ====== &ndash;&gt;-->
 <!--        <q-item-label header class="q-px-md text-grey-3 q-mt-sm">-->

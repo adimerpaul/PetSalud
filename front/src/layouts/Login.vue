@@ -104,6 +104,7 @@
 
 <script setup>
 import { getCurrentInstance, ref, computed } from 'vue'
+import {setCssVar} from "quasar";
 const { proxy } = getCurrentInstance()
 
 const username = ref('')

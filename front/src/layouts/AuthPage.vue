@@ -179,6 +179,8 @@
 </template>
 
 <script>
+import {setCssVar} from "quasar";
+
 export default {
   name: 'AuthPetSalud',
 
@@ -208,13 +210,16 @@ export default {
       this.$store.isLogged = true
       this.$store.user = user
       // $store.permissions = (user.permissions || []).map(p => p.name)
+      console.log('Permisos del usuario:', user)
+      localStorage.setItem('veterinaria_color', user.veterinaria.color || '#1976D2')
+      setCssVar('primary', localStorage.getItem('veterinaria_color') || '#1976D2')
       this.$router.push('/')
     },
 
     doLogin () {
       this.loading = true
       this.$axios.post('/login', this.login)
-        .then((res) => { this.saveSession(res.data.token, res.data.user) })
+        .then((res) => {this.saveSession(res.data.token, res.data.user) })
         .catch((e) => {
           console.error(e)
           this.$alert.error(e?.response?.data?.message || 'Error de autenticación', 'Error')

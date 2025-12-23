@@ -6,6 +6,7 @@ import moment from "moment";
 import VueApexCharts from "vue3-apexcharts";
 
 import {computed} from "vue";
+import {setCssVar} from "quasar";
 // Be careful when using SSR for cross-request state pollution
 // due to creating a Singleton instance here;
 // If any client changes this (global) instance, it might be a
@@ -23,6 +24,7 @@ export default boot(({ app, router }) => {
   app.config.globalProperties.$store = useCounterStore()
   app.config.globalProperties.$url = import.meta.env.VITE_API_BACK
   app.config.globalProperties.$version = import.meta.env.VITE_VERSION
+  setCssVar('primary', localStorage.getItem('veterinaria_color') || '#1976D2')
   app.config.globalProperties.$filters = {
     dateDmYHis (value) {
       const meses = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Set', 'Oct', 'Nov', 'Dic']

@@ -90,6 +90,7 @@ export default defineConfig((/* ctx */) => {
         'Notify',
         'Dialog',
         'LocalStorage',
+        // 'ColorPicker'
       ]
     },
 

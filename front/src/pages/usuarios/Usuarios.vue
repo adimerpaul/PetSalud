@@ -229,7 +229,7 @@ export default {
       showPassword: false,
       avatarFile: null,
 
-      roles: ['Administrador', 'Vendedor', 'Veterinario'],
+      roles: ['Vendedor', 'Veterinario'],
 
       columns: [
         { name: 'actions', label: 'Acciones', align: 'center' },
