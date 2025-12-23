@@ -84,9 +84,9 @@
             <q-tab-panel name="mascota" animated>
               <MascotaForm :mascotaData="mascota" @getMascota="getMascota" v-if="mascota.id"/>
             </q-tab-panel>
-            <!--            <q-tab-panel name="historial" animated>-->
-            <!--              <MascotaHistorial :mascota="mascota" @getMascota="getMascota"/>-->
-            <!--            </q-tab-panel>-->
+            <q-tab-panel name="historial" animated>
+              <MascotaHistorial :mascota="mascota" @getMascota="getMascota"/>
+            </q-tab-panel>
             <!--            <q-tab-panel name="ventas" animated>-->
             <!--              <MascotaSales :mascota="mascota" @getMascota="getMascota"/>-->
             <!--            </q-tab-panel>-->
@@ -119,6 +119,7 @@
 <script>
 import moment from "moment";
 import MascotaForm from "pages/mascotas/MascotaForm.vue";
+import MascotaHistorial from "pages/mascotas/MascotaHistorial.vue";
 // import MascotaUpdate from "pages/mascotas/MascotaUpdate.vue";
 // import MascotaSales from "pages/mascotas/MascotaSales.vue";
 // import MascotaComplementos from "pages/mascotas/MascotaComplemetos.vue";
@@ -131,9 +132,9 @@ import MascotaForm from "pages/mascotas/MascotaForm.vue";
 
 export default {
   components: {
-    MascotaForm
+    MascotaForm,
     // MascotaFotografias,
-    // MascotaHistorial,
+    MascotaHistorial,
     // MascotaDesparacitacion,
     // MascotaVacunas,
     // MascotaLaboratorios, MascotaCertificados, MascotaComplementos, MascotaSales, MascotaUpdate
