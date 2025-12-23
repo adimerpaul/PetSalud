@@ -172,82 +172,15 @@
             <q-item-label class="text-white">Mi Cuenta</q-item-label>
           </q-item-section>
         </q-item>
-<!--        cambiar contraseña-->
-<!--        <q-item dense to="/mi-cuenta/password" exact clickable class="menu-item" active-class="menu-active" v-close-popup >-->
-<!--          <q-item-section avatar>-->
-<!--            <q-icon name="lock_reset" class="text-white"/>-->
-<!--          </q-item-section>-->
-<!--          <q-item-section>-->
-<!--            <q-item-label class="text-white">Cambiar Contraseña</q-item-label>-->
-<!--          </q-item-section>-->
-<!--        </q-item>-->
-
-<!--        &lt;!&ndash; ====== ADMINISTRACIÓN ====== &ndash;&gt;-->
-<!--        <q-item-label header class="q-px-md text-grey-3 q-mt-sm">-->
-<!--          Administración-->
-<!--        </q-item-label>-->
-
-<!--        &lt;!&ndash; USUARIOS (roles admin/vendedor/veterinario) &ndash;&gt;-->
-<!--        <q-item-->
-<!--          dense-->
-<!--          to="/usuarios"-->
-<!--          exact-->
-<!--          clickable-->
-<!--          class="menu-item"-->
-<!--          active-class="menu-active"-->
-<!--          v-close-popup-->
-<!--          v-if="canPermission('Usuarios')"-->
-<!--        >-->
-<!--          <q-item-section avatar>-->
-<!--            <q-icon name="people" class="text-white"/>-->
-<!--          </q-item-section>-->
-<!--          <q-item-section>-->
-<!--            <q-item-label class="text-white">Usuarios</q-item-label>-->
-<!--            <q-item-label caption class="text-grey-3">Admin · Vendedor · Veterinario</q-item-label>-->
-<!--          </q-item-section>-->
-<!--        </q-item>-->
-
-<!--        &lt;!&ndash; ====== MI CUENTA ====== &ndash;&gt;-->
-<!--        <q-item-label header class="q-px-md text-grey-3 q-mt-sm">-->
-<!--          Mi cuenta-->
-<!--        </q-item-label>-->
-
-<!--        <q-item dense to="/mi-cuenta" exact clickable class="menu-item" active-class="menu-active" v-close-popup>-->
-<!--          <q-item-section avatar>-->
-<!--            <q-icon name="manage_accounts" class="text-white"/>-->
-<!--          </q-item-section>-->
-<!--          <q-item-section>-->
-<!--            <q-item-label class="text-white">Perfil</q-item-label>-->
-<!--            <q-item-label caption class="text-grey-3">Usuario, email, avatar</q-item-label>-->
-<!--          </q-item-section>-->
-<!--        </q-item>-->
-
-<!--        <q-item dense to="/mi-cuenta/password" exact clickable class="menu-item" active-class="menu-active" v-close-popup>-->
-<!--          <q-item-section avatar>-->
-<!--            <q-icon name="lock_reset" class="text-white"/>-->
-<!--          </q-item-section>-->
-<!--          <q-item-section>-->
-<!--            <q-item-label class="text-white">Contraseña</q-item-label>-->
-<!--            <q-item-label caption class="text-grey-3">Cambiar clave</q-item-label>-->
-<!--          </q-item-section>-->
-<!--        </q-item>-->
-
-<!--        &lt;!&ndash; ====== VETERINARIA ====== &ndash;&gt;-->
-<!--        <q-item-label header class="q-px-md text-grey-3 q-mt-sm">-->
-<!--          Veterinaria-->
-<!--        </q-item-label>-->
-
-<!--        <q-item dense to="/veterinaria" exact clickable class="menu-item" active-class="menu-active" v-close-popup>-->
-<!--          <q-item-section avatar>-->
-<!--            <q-icon name="home_repair_service" class="text-white"/>-->
-<!--          </q-item-section>-->
-<!--          <q-item-section>-->
-<!--            <q-item-label class="text-white">Datos de Veterinaria</q-item-label>-->
-<!--            <q-item-label caption class="text-grey-3">Nombre, dirección, teléfono…</q-item-label>-->
-<!--          </q-item-section>-->
-<!--        </q-item>-->
-
-        <!-- FOOTER -->
+<!--        mascotas-->
+        <q-item dense to="/mascotas" exact clickable class="menu-item" active-class="menu-active" v-close-popup >
+          <q-item-section avatar>
+            <q-icon name="pets" class="text-white"/>
+          </q-item-section>
+          <q-item-section>
+            <q-item-label class="text-white">Mascotas</q-item-label>
+          </q-item-section>
+        </q-item>
         <div class="q-pa-md">
           <div class="text-grey-3 text-caption">
             PetSalud v{{ $version }}

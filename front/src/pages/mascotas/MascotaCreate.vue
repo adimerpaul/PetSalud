@@ -1,11 +1,14 @@
-<script setup>
-
-</script>
-
 <template>
-  $END$
+  <q-page class="q-pa-xs">
+    <mascota-form />
+  </q-page>
 </template>
+<script>
 
-<style scoped>
+import {defineComponent} from "vue";
+import MascotaForm from "pages/mascotas/MascotaForm.vue";
 
-</style>
+export default defineComponent({
+  components: {MascotaForm}
+})
+</script>
