@@ -10,8 +10,12 @@ class Tratamiento extends Model
     use SoftDeletes;
     protected $fillable = [
         'historial_clinico_id',
-        'medicamento','dosis','frecuencia','duracion',
-        'indicaciones','costo','pagado'
+        'user_id',
+        'fecha',
+        'observaciones',
+        'comentario',
+        'costo',
+        'pagado'
     ];
     protected $hidden = [
         'created_at',

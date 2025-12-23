@@ -60,7 +60,7 @@ class HistorialClinicoController extends Controller
             'mascota','tratamientos','user','mascota.veterinaria'
         ])->findOrFail($id);
 
-        return Pdf::loadView('pdf.historial_clinico',compact('historial'))
+        return Pdf::loadView('pdf.historial',compact('historial'))
             ->setPaper('A4')
             ->stream('historial.pdf');
     }

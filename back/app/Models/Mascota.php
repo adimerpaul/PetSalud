@@ -38,4 +38,8 @@ class Mascota extends Model
         'updated_at',
         'deleted_at',
     ];
+//    veterinaria
+    public function veterinaria() {
+        return $this->belongsTo(Veterinaria::class);
+    }
 }

@@ -7,6 +7,8 @@ use App\Http\Controllers\MascotaController;
 use App\Http\Controllers\VeterinariaController;
 use App\Http\Controllers\HistorialClinicoController;
 use App\Http\Controllers\ProductoController;
+use App\Http\Controllers\TratamientoController;
+use App\Http\Controllers\TratamientoProductoController;
 
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
@@ -41,12 +43,23 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/mascotas/{id}/historiales', [HistorialClinicoController::class, 'index']);
     Route::post('/historiales', [HistorialClinicoController::class, 'store']);
-    Route::get('/historiales/{id}/pdf', [HistorialClinicoController::class, 'pdf']);
+    Route::put('/historiales/{id}', [HistorialClinicoController::class, 'update']);
+//    delete
+    Route::delete('/historiales/{id}', [HistorialClinicoController::class, 'destroy']);
 
     Route::get('productos', [ProductoController::class, 'index']);
     Route::post('productos', [ProductoController::class, 'store']);
     Route::put('productos/{id}', [ProductoController::class, 'update']);
     Route::delete('productos/{id}', [ProductoController::class, 'destroy']);
     Route::post('productos/{id}/imagen', [ProductoController::class, 'imagen']);
+
+    Route::post('tratamientos', [TratamientoController::class,'store']);
+    Route::put('tratamientos/{id}', [TratamientoController::class,'update']);
+    Route::delete('tratamientos/{id}', [TratamientoController::class,'destroy']);
+
+    Route::post('tratamiento-productos', [TratamientoProductoController::class,'store']);
+    Route::put('tratamiento-productos/{id}', [TratamientoProductoController::class,'update']);
+    Route::delete('tratamiento-productos/{id}', [TratamientoProductoController::class,'destroy']);
 });
+Route::get('/historiales/{id}/pdf', [HistorialClinicoController::class, 'pdf']);
 

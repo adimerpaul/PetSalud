@@ -3,64 +3,277 @@
 <head>
     <meta charset="utf-8">
     <style>
-        body { font-family: DejaVu Sans; font-size: 12px; }
-        h2 { text-align: center; margin-bottom: 5px; }
-        .table { width:100%; border-collapse: collapse; }
-        .table td, .table th { border:1px solid #333; padding:6px; }
-        .section { margin-top: 10px; }
+        @page { margin: 18px 22px; }
+        *{ box-sizing:border-box; }
+
+        body{
+            font-family: DejaVu Sans, sans-serif;
+            font-size: 11px;
+            color:#111;
+            margin:0;
+        }
+
+        .title{
+            text-align:center;
+            font-size: 18px;
+            font-weight: 800;
+            margin-bottom: 12px;
+            letter-spacing: .5px;
+        }
+
+        .row{ width:100%; clear:both; }
+        .col{ float:left; }
+        .col-40{ width:40%; }
+        .col-60{ width:60%; }
+        .col-50{ width:50%; }
+
+        .bold{ font-weight:700; }
+        .muted{ color:#666; }
+
+        .pet-photo{
+            width:78px;
+            height:78px;
+            border:1px solid #ddd;
+            border-radius:4px;
+            overflow:hidden;
+            background:#f5f5f5;
+            margin-bottom:6px;
+        }
+        .pet-photo img{
+            width:100%;
+            height:100%;
+            object-fit:cover;
+        }
+
+        .info-table{
+            width:100%;
+            border-collapse:collapse;
+        }
+        .info-table td{
+            padding:2px 0;
+            vertical-align:top;
+        }
+        .label{
+            width:85px;
+            font-weight:700;
+        }
+
+        .hr{
+            border-top:1px solid #ddd;
+            margin:8px 0;
+        }
+
+        .vital td{
+            padding:2px 6px 2px 0;
+            vertical-align:top;
+        }
+
+        .section-title{
+            font-weight:800;
+            font-size:12px;
+            margin:12px 0 6px;
+        }
+
+        table.main{
+            width:100%;
+            border-collapse:collapse;
+            font-size:10.5px;
+        }
+        table.main thead th{
+            background:#0B66C3;
+            color:#fff;
+            padding:7px;
+            text-align:left;
+        }
+        table.main tbody td{
+            padding:6px;
+            border-bottom:1px solid #eee;
+        }
+        table.main tbody tr:nth-child(even){
+            background:#f5f6f8;
+        }
+
+        .w-fecha{ width:90px; }
+        .w-costo{ width:90px; text-align:right; }
+
+        .footer{
+            margin-top:20px;
+            font-size:11px;
+        }
+
+        .clearfix::after{
+            content:"";
+            display:block;
+            clear:both;
+        }
     </style>
 </head>
+
 <body>
+@php
+    // ========= FOTO (BASE64) =========
+    $photoFile = public_path('uploads/' . ($historial->mascota->photo ?? ''));
+    $fallback  = public_path('defaultPet.jpg'); // opcional
 
-<h2>{{ $historial->mascota->veterinaria->nombre }}</h2>
-<p style="text-align:center">
-    {{ $historial->mascota->veterinaria->direccion }} |
-    {{ $historial->mascota->veterinaria->telefono }}
-</p>
+    $imgPath = is_file($photoFile) ? $photoFile : (is_file($fallback) ? $fallback : null);
+    $imgData = null;
 
-<hr>
+    if ($imgPath) {
+        $ext = strtolower(pathinfo($imgPath, PATHINFO_EXTENSION));
+        $mime = $ext === 'png' ? 'image/png' : 'image/jpeg';
+        $imgData = 'data:' . $mime . ';base64,' . base64_encode(file_get_contents($imgPath));
+    }
 
-<b>Mascota:</b> {{ $historial->mascota->nombre }} <br>
-<b>Especie:</b> {{ $historial->mascota->especie }} |
-<b>Raza:</b> {{ $historial->mascota->raza }} <br>
-<b>Propietario:</b> {{ $historial->mascota->propietario_nombre }}
+    $m   = $historial->mascota;
+    $vet = $m->veterinaria ?? null;
 
-<div class="section">
-    <b>Motivo de consulta</b>
-    <p>{{ $historial->motivo_consulta }}</p>
+    $v = fn($x) => ($x === null || $x === '' ? '-' : $x);
+@endphp
 
-    <b>Diagnóstico</b>
-    <p>{{ $historial->diagnostico }}</p>
-</div>
+<div class="title">HISTORIAL CLÍNICO</div>
 
-<div class="section">
-    <b>Tratamientos</b>
-    <table class="table">
-        <thead>
-        <tr>
-            <th>Medicamento</th>
-            <th>Dosis</th>
-            <th>Frecuencia</th>
-            <th>Duración</th>
-        </tr>
-        </thead>
-        <tbody>
-        @foreach($historial->tratamientos as $t)
+<div class="row clearfix">
+    <div class="col col-40">
+        <div class="pet-photo">
+            @if($imgData)
+                <img src="{{ $imgData }}">
+            @endif
+        </div>
+
+        <table class="info-table">
+            <tr><td class="label">Nombre:</td><td>{{ $v($m->nombre) }}</td></tr>
+            <tr><td class="label">Dirección:</td><td>{{ $v($m->propietario_direccion) }}</td></tr>
+            <tr><td class="label">Especie:</td><td>{{ $v($m->especie) }}</td></tr>
+            <tr><td class="label">Edad:</td><td>{{ $v($m->edad) }}</td></tr>
+            <tr><td class="label">Peso:</td><td>{{ $v($historial->peso) }} {{ $historial->peso ? 'kg' : '' }}</td></tr>
+            <tr><td class="label">Anamnesis:</td><td>{{ $v($historial->anamnesis) }}</td></tr>
+{{--            observaciones--}}
             <tr>
-                <td>{{ $t->medicamento }}</td>
-                <td>{{ $t->dosis }}</td>
-                <td>{{ $t->frecuencia }}</td>
-                <td>{{ $t->duracion }}</td>
+                <td class="label">Observaciones:</td><td>{{ $v($historial->observaciones) }}</td>
             </tr>
-        @endforeach
-        </tbody>
-    </table>
+        </table>
+    </div>
+
+    <div class="col col-60">
+        <table class="info-table">
+            <tr><td class="label">Propietario:</td><td>{{ $v($m->propietario_nombre) }}</td></tr>
+            <tr><td class="label">Celular:</td><td>{{ $v($m->propietario_celular) }}</td></tr>
+            <tr><td class="label">Raza:</td><td>{{ $v($m->raza) }}</td></tr>
+            <tr><td class="label">Sexo:</td><td>{{ $v($m->sexo) }}</td></tr>
+            <tr><td class="label">Color:</td><td>{{ $v($m->color) }}</td></tr>
+        </table>
+
+        <div class="hr"></div>
+
+        <table class="vital">
+            <tr>
+                <td class="bold">TR:</td><td>{{ $v($historial->tr) }}</td>
+                <td class="bold">FC:</td><td>{{ $v($historial->fc) }}</td>
+                <td class="bold">FR:</td><td>{{ $v($historial->fr) }}</td>
+                <td class="bold">Pulso:</td><td>{{ $v($historial->pulso) }}</td>
+            </tr>
+            <tr>
+                <td class="bold">TLLC:</td><td>{{ $v($historial->tllc) }}</td>
+                <td class="bold">THC:</td><td>{{ $v($historial->thc) }}</td>
+                <td class="bold">CF:</td><td>{{ $v($historial->cf) }}</td>
+                <td class="bold">Mucosa:</td><td>{{ $v($historial->mucosidad) }}</td>
+            </tr>
+        </table>
+
+        <div style="margin-top:4px">
+            <span class="bold">VACUNAS:</span>
+            Parvo: {{ $v($historial->parvo) }} ·
+            Hexa: {{ $v($historial->hexa) }} ·
+            Octa: {{ $v($historial->octa) }} ·
+            Rábica: {{ $v($historial->rabica) }} ·
+            Triple: {{ $v($historial->triple) }}
+        </div>
+
+{{--        <div style="margin-top:6px">--}}
+{{--            <div class="row clearfix">--}}
+{{--                <div class="col col-50">--}}
+{{--                    <div><b>Esterilizado:</b> {{ $v($historial->esterilizado) }}</div>--}}
+{{--                    <div><b>Desparasitación:</b> {{ $v($historial->desparasitacion) }}</div>--}}
+{{--                    <div><b>Ecografía:</b> {{ $v($historial->ecografia) }}</div>--}}
+{{--                </div>--}}
+{{--                <div class="col col-50">--}}
+{{--                    <div><b>Rayos X:</b> {{ $v($historial->rayox) }}</div>--}}
+{{--                    <div><b>Laboratorio:</b> {{ $v($historial->laboratorio) }}</div>--}}
+{{--                    <div><b>Pronóstico:</b> {{ $v($historial->pronostico) }}</div>--}}
+{{--                </div>--}}
+{{--            </div>--}}
+
+{{--            <div style="margin-top:6px">--}}
+{{--                <b>Diagnóstico:</b> {{ $v($historial->diagnostico) }}--}}
+{{--            </div>--}}
+{{--        </div>--}}
+        <table>
+            <tr>
+                <td class="label">Esterilizado:</td><td>{{ $v($historial->esterilizado) }}</td>
+            </tr>
+            <tr>
+                <td class="label">Desparasitación:</td><td>{{ $v($historial->desparasitacion) }}</td>
+            </tr>
+            <tr>
+                <td class="label">Ecografía:</td><td>{{ $v($historial->ecografia) }}</td>
+            </tr>
+            <tr>
+                <td class="label">Rayos X:</td><td>{{ $v($historial->rayox) }}</td>
+            </tr>
+            <tr>
+                <td class="label">Laboratorio:</td><td>{{ $v($historial->laboratorio) }}</td>
+            </tr>
+            <tr>
+                <td class="label">Pronóstico:</td><td>{{ $v($historial->pronostico) }}</td>
+            </tr>
+            <tr>
+                <td class="label">Diagnóstico:</td><td>{{ $v($historial->diagnostico) }}</td>
+            </tr>
+        </table>
+    </div>
 </div>
 
-<p class="section">
-    <b>Médico:</b> {{ $historial->user->name }} <br>
-    <b>Fecha:</b> {{ $historial->fecha->format('d/m/Y') }}
-</p>
+<div class="section-title">Tratamientos Realizados</div>
+
+<table class="main">
+    <thead>
+    <tr>
+        <th class="w-fecha">Fecha</th>
+        <th>Observaciones</th>
+        <th>Comentario</th>
+        <th>Medicamentos</th>
+        <th class="w-costo">Costo</th>
+    </tr>
+    </thead>
+    <tbody>
+    @forelse($historial->tratamientos as $t)
+        <tr>
+            <td>{{ \Carbon\Carbon::parse($t->fecha ?? $historial->fecha)->format('d/m/Y') }}</td>
+            <td>{{ $v($t->observaciones ?? $t->indicaciones) }}</td>
+            <td>{{ $v($t->comentario) }}</td>
+            <td>{{ $v($t->medicamento) }}</td>
+            <td class="w-costo">
+                {{ $t->costo !== null ? number_format($t->costo,2).' Bs' : '-' }}
+            </td>
+        </tr>
+    @empty
+        <tr>
+            <td colspan="5" class="muted">Sin tratamientos registrados.</td>
+        </tr>
+    @endforelse
+    </tbody>
+</table>
+
+<div class="footer">
+    <div><b>Veterinario:</b> {{ $historial->user->name }}</div>
+    @if($vet)
+        <div class="muted">
+            {{ $vet->nombre }}
+            @if($vet->direccion) · {{ $vet->direccion }} @endif
+            @if($vet->telefono) · {{ $vet->telefono }} @endif
+        </div>
+    @endif
+</div>
 
 </body>
 </html>

@@ -13,15 +13,15 @@ return new class extends Migration
     {
         Schema::create('tratamientos', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('historial_clinico_id');
+            $table->foreignId('historial_clinico_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('user_id')->nullable();
 
-            $table->string('medicamento');
-            $table->string('dosis')->nullable();
-            $table->string('frecuencia')->nullable();
-            $table->string('duracion')->nullable();
-            $table->text('indicaciones')->nullable();
-            $table->decimal('costo',10,2)->nullable();
+            $table->date('fecha')->nullable();
+            $table->text('observaciones')->nullable();
+            $table->text('comentario')->nullable();
+            $table->decimal('costo',10,2)->default(0);
             $table->boolean('pagado')->default(false);
+
             $table->softDeletes();
             $table->timestamps();
         });
