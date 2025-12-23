@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\MascotaController;
 use App\Http\Controllers\VeterinariaController;
+use App\Http\Controllers\HistorialClinicoController;
 
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
@@ -36,5 +37,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/mascotas/{mascota}', [MascotaController::class, 'show']);
     Route::post('/mascotas/{mascota}', [MascotaController::class, 'update']); // para multipart (foto)
     Route::delete('/mascotas/{mascota}', [MascotaController::class, 'destroy']);
+
+    Route::get('/mascotas/{id}/historiales', [HistorialClinicoController::class, 'index']);
+    Route::post('/historiales', [HistorialClinicoController::class, 'store']);
+    Route::get('/historiales/{id}/pdf', [HistorialClinicoController::class, 'pdf']);
 });
 
