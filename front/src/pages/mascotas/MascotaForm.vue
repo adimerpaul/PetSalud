@@ -221,6 +221,8 @@ export default {
 
       req.then(() => {
         this.$alert.success(this.isEdit ? 'Mascota actualizada' : 'Mascota creada')
+        // emit
+        this.$emit('getMascota')
         // this.$router.push('/mascotas')
       })
         .catch(() => this.$alert.error('Error al guardar'))

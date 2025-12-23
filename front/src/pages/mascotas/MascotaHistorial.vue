@@ -69,9 +69,9 @@
               <q-btn dense flat round icon="edit" color="primary" @click.stop="openEdit(h)">
                 <q-tooltip>Editar</q-tooltip>
               </q-btn>
-              <q-btn dense flat round icon="delete" color="negative" @click.stop="askDelete(h)">
-                <q-tooltip>Eliminar</q-tooltip>
-              </q-btn>
+<!--              <q-btn dense flat round icon="delete" color="negative" @click.stop="askDelete(h)">-->
+<!--                <q-tooltip>Eliminar</q-tooltip>-->
+<!--              </q-btn>-->
             </div>
           </q-item-section>
         </q-item>
@@ -175,9 +175,11 @@
               <div class="col-12 col-md-4">
                 <q-input v-model="form.ecografia" outlined dense stack-label label="Ecografía" placeholder="Sí/No/Observación" />
               </div>
+              <div class="col-12 col-md-4">
+                <q-input v-model="form.laboratorio" outlined dense stack-label label="Laboratorio" placeholder="Ej: Hemograma, química..." />
+              </div>
             </div>
 
-            <q-input v-model="form.laboratorio" outlined dense stack-label label="Laboratorio" placeholder="Ej: Hemograma, química..." />
 
             <!-- VACUNAS -->
             <q-card flat bordered class="bg-grey-1">
@@ -281,65 +283,65 @@
             </q-card>
 
             <!-- TRATAMIENTOS -->
-            <q-card flat bordered>
-              <q-card-section class="row items-center q-col-gutter-sm">
-                <q-icon name="medical_services" />
-                <div class="text-subtitle2 text-weight-bold">Tratamientos</div>
-                <q-space />
-                <q-btn color="primary" icon="add" label="Agregar" no-caps dense @click="addTratamiento" />
-              </q-card-section>
+<!--            <q-card flat bordered>-->
+<!--              <q-card-section class="row items-center q-col-gutter-sm">-->
+<!--                <q-icon name="medical_services" />-->
+<!--                <div class="text-subtitle2 text-weight-bold">Tratamientos</div>-->
+<!--                <q-space />-->
+<!--                <q-btn color="primary" icon="add" label="Agregar" no-caps dense @click="addTratamiento" />-->
+<!--              </q-card-section>-->
 
-              <q-separator />
+<!--              <q-separator />-->
 
-              <q-card-section class="q-pa-sm">
-                <q-banner v-if="form.tratamientos.length === 0" rounded class="bg-grey-1 text-grey-8">
-                  <template v-slot:avatar><q-icon name="info" /></template>
-                  Sin tratamientos. Presiona “Agregar”.
-                </q-banner>
+<!--              <q-card-section class="q-pa-sm">-->
+<!--                <q-banner v-if="form.tratamientos.length === 0" rounded class="bg-grey-1 text-grey-8">-->
+<!--                  <template v-slot:avatar><q-icon name="info" /></template>-->
+<!--                  Sin tratamientos. Presiona “Agregar”.-->
+<!--                </q-banner>-->
 
-                <div v-for="(t, i) in form.tratamientos" :key="i" class="q-mb-sm">
-                  <q-card flat bordered class="bg-grey-1">
-                    <q-card-section class="row items-center q-col-gutter-sm">
-                      <div class="col">
-                        <div class="text-weight-medium">Tratamiento #{{ i + 1 }}</div>
-                        <div class="text-caption text-grey-7">Medicamento + dosis + frecuencia + duración</div>
-                      </div>
-                      <div class="col-auto">
-                        <q-btn dense flat round icon="delete" color="negative" @click="removeTratamiento(i)" />
-                      </div>
-                    </q-card-section>
+<!--                <div v-for="(t, i) in form.tratamientos" :key="i" class="q-mb-sm">-->
+<!--                  <q-card flat bordered class="bg-grey-1">-->
+<!--                    <q-card-section class="row items-center q-col-gutter-sm">-->
+<!--                      <div class="col">-->
+<!--                        <div class="text-weight-medium">Tratamiento #{{ i + 1 }}</div>-->
+<!--                        <div class="text-caption text-grey-7">Medicamento + dosis + frecuencia + duración</div>-->
+<!--                      </div>-->
+<!--                      <div class="col-auto">-->
+<!--                        <q-btn dense flat round icon="delete" color="negative" @click="removeTratamiento(i)" />-->
+<!--                      </div>-->
+<!--                    </q-card-section>-->
 
-                    <q-separator />
+<!--                    <q-separator />-->
 
-                    <q-card-section class="row q-col-gutter-sm">
-                      <div class="col-12 col-md-4">
-                        <q-input v-model="t.medicamento" outlined dense stack-label label="Medicamento" />
-                      </div>
-                      <div class="col-12 col-md-2">
-                        <q-input v-model="t.dosis" outlined dense stack-label label="Dosis" />
-                      </div>
-                      <div class="col-12 col-md-2">
-                        <q-input v-model="t.frecuencia" outlined dense stack-label label="Frecuencia" />
-                      </div>
-                      <div class="col-12 col-md-2">
-                        <q-input v-model="t.duracion" outlined dense stack-label label="Duración" />
-                      </div>
-                      <div class="col-12 col-md-2">
-                        <q-input v-model.number="t.costo" type="number" step="0.01" outlined dense stack-label label="Costo" />
-                      </div>
+<!--                    <q-card-section class="row q-col-gutter-sm">-->
+<!--                      <div class="col-12 col-md-4">-->
+<!--                        <q-input v-model="t.medicamento" outlined dense stack-label label="Medicamento" />-->
+<!--                      </div>-->
+<!--                      <div class="col-12 col-md-2">-->
+<!--                        <q-input v-model="t.dosis" outlined dense stack-label label="Dosis" />-->
+<!--                      </div>-->
+<!--                      <div class="col-12 col-md-2">-->
+<!--                        <q-input v-model="t.frecuencia" outlined dense stack-label label="Frecuencia" />-->
+<!--                      </div>-->
+<!--                      <div class="col-12 col-md-2">-->
+<!--                        <q-input v-model="t.duracion" outlined dense stack-label label="Duración" />-->
+<!--                      </div>-->
+<!--                      <div class="col-12 col-md-2">-->
+<!--                        <q-input v-model.number="t.costo" type="number" step="0.01" outlined dense stack-label label="Costo" />-->
+<!--                      </div>-->
 
-                      <div class="col-12">
-                        <q-input v-model="t.indicaciones" type="textarea" autogrow outlined dense stack-label label="Indicaciones" />
-                      </div>
+<!--                      <div class="col-12">-->
+<!--                        <q-input v-model="t.indicaciones" type="textarea" autogrow outlined dense stack-label label="Indicaciones" />-->
+<!--                      </div>-->
 
-                      <div class="col-12 col-md-3">
-                        <q-toggle v-model="t.pagado" label="Pagado" />
-                      </div>
-                    </q-card-section>
-                  </q-card>
-                </div>
-              </q-card-section>
-            </q-card>
+<!--                      <div class="col-12 col-md-3">-->
+<!--                        <q-toggle v-model="t.pagado" label="Pagado" />-->
+<!--                      </div>-->
+<!--                    </q-card-section>-->
+<!--                  </q-card>-->
+<!--                </div>-->
+<!--              </q-card-section>-->
+<!--            </q-card>-->
 
             <!-- ACTIONS -->
             <div class="row items-center q-col-gutter-sm">
