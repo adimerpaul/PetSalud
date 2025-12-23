@@ -11,6 +11,9 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/me', [AuthController::class, 'me']);
+    Route::put('/me', [AuthController::class, 'updateMe']);
+    Route::put('/me/password', [AuthController::class, 'updateMyPassword']);
+    Route::post('/me/avatar', [AuthController::class, 'updateMyAvatar']);
 
     Route::get('/users', [UserController::class, 'index']);
     Route::post('/users', [UserController::class, 'store']);
@@ -22,5 +25,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/veterinaria', [VeterinariaController::class, 'showMine']);
     Route::put('/veterinaria', [VeterinariaController::class, 'updateMine']);
+
+    // uploads
+    Route::post('/veterinaria/logo', [VeterinariaController::class, 'uploadLogo']);
+    Route::post('/veterinaria/imagen', [VeterinariaController::class, 'uploadImagen']);
 });
 

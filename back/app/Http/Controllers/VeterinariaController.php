@@ -4,59 +4,47 @@ namespace App\Http\Controllers;
 
 use App\Models\Veterinaria;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class VeterinariaController extends Controller
 {
-    private function ensureAdmin(Request $request): void
+    private function ensureAdmin(Request $request)
     {
-        $user = $request->user();
-        if (!$user || ($user->role !== 'Administrador' && $user->role !== 'Admin')) {
-            abort(403, 'Solo el Administrador puede acceder a esta opción.');
+        $role = strtolower($request->user()->role ?? '');
+        if (!in_array($role, ['admin', 'administrador'])) {
+            abort(403, 'Solo el administrador puede acceder.');
         }
     }
 
-    // GET /veterinaria -> devuelve SOLO la veterinaria del usuario logueado
-    public function showMine(Request $request)
+    private function getVeterinaria(Request $request): Veterinaria
     {
-        $this->ensureAdmin($request);
-
         $user = $request->user();
+
         if (!$user->veterinaria_id) {
-            return response()->json([
-                'message' => 'El usuario no tiene veterinaria asignada.'
-            ], 404);
+            abort(404, 'Usuario sin veterinaria asignada.');
         }
 
         $vet = Veterinaria::find($user->veterinaria_id);
         if (!$vet) {
-            return response()->json([
-                'message' => 'Veterinaria no encontrada.'
-            ], 404);
+            abort(404, 'Veterinaria no encontrada.');
         }
 
         return $vet;
     }
 
-    // PUT /veterinaria -> actualiza SOLO la veterinaria del usuario logueado
+    // GET /veterinaria
+    public function showMine(Request $request)
+    {
+        $this->ensureAdmin($request);
+        return $this->getVeterinaria($request);
+    }
+
+    // PUT /veterinaria
     public function updateMine(Request $request)
     {
         $this->ensureAdmin($request);
+        $vet = $this->getVeterinaria($request);
 
-        $user = $request->user();
-        if (!$user->veterinaria_id) {
-            return response()->json([
-                'message' => 'El usuario no tiene veterinaria asignada.'
-            ], 404);
-        }
-
-        $vet = Veterinaria::find($user->veterinaria_id);
-        if (!$vet) {
-            return response()->json([
-                'message' => 'Veterinaria no encontrada.'
-            ], 404);
-        }
-
-        // Ajusta estos campos a TU modelo real (nombres de columnas)
         $data = $request->validate([
             'nombre' => 'required|string|max:150',
             'direccion' => 'nullable|string|max:255',
@@ -64,14 +52,51 @@ class VeterinariaController extends Controller
             'email' => 'nullable|email|max:150',
             'descripcion' => 'nullable|string|max:800',
             'color' => 'nullable|string|max:30',
-            'nit' => 'nullable|string|max:60',
-            'ciudad' => 'nullable|string|max:80',
-            'propietario' => 'nullable|string|max:120',
-            'logo' => 'nullable|string|max:255', // si manejas logo como filename
         ]);
 
         $vet->update($data);
+        return $vet;
+    }
 
+    // POST /veterinaria/logo
+    public function uploadLogo(Request $request)
+    {
+        $this->ensureAdmin($request);
+        $vet = $this->getVeterinaria($request);
+
+        $request->validate([
+            'logo' => 'required|image|max:2048'
+        ]);
+
+        if ($vet->logo) {
+            Storage::disk('public')->delete('veterinarias/' . $vet->logo);
+        }
+
+        $filename = uniqid('logo_') . '.' . $request->logo->extension();
+        $request->logo->storeAs('veterinarias', $filename, 'public');
+
+        $vet->update(['logo' => $filename]);
+        return $vet;
+    }
+
+    // POST /veterinaria/imagen
+    public function uploadImagen(Request $request)
+    {
+        $this->ensureAdmin($request);
+        $vet = $this->getVeterinaria($request);
+
+        $request->validate([
+            'imagen' => 'required|image|max:4096'
+        ]);
+
+        if ($vet->imagen) {
+            Storage::disk('public')->delete('veterinarias/' . $vet->imagen);
+        }
+
+        $filename = uniqid('img_') . '.' . $request->imagen->extension();
+        $request->imagen->storeAs('veterinarias', $filename, 'public');
+
+        $vet->update(['imagen' => $filename]);
         return $vet;
     }
 }

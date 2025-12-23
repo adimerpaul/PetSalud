@@ -7,6 +7,9 @@ use App\Models\Veterinaria;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
+use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Gd\Driver;
+use Illuminate\Validation\Rule;
 
 class AuthController extends Controller
 {
@@ -95,8 +98,85 @@ class AuthController extends Controller
 
     public function me(Request $request)
     {
-        $user = $request->user()->load('veterinaria:id,nombre,color,estado');
-        return response()->json($user);
+        return $request->user()->load('veterinaria');
+    }
+
+    public function updateMe(Request $request)
+    {
+        /** @var User $user */
+        $user = $request->user();
+
+        $data = $request->validate([
+            'name' => ['required','string','max:150'],
+            'username' => ['required','string','max:80', Rule::unique('users','username')->ignore($user->id)],
+            'email' => ['nullable','email','max:150', Rule::unique('users','email')->ignore($user->id)],
+        ]);
+
+        $user->update($data);
+
+        return $user->fresh()->load('veterinaria');
+    }
+
+    public function updateMyPassword(Request $request)
+    {
+        /** @var User $user */
+        $user = $request->user();
+//        current_password=''
+        if (!isset($request->current_password) || !isset($request->password)) {
+            return response()->json(['message' => 'Se requieren la contraseña actual y la nueva contraseña.'], 422);
+        }
+        if ($request->current_password === $request->password) {
+            return response()->json(['message' => 'La nueva contraseña debe ser diferente a la actual.'], 422);
+        }
+
+        $data = $request->validate([
+            'current_password' => ['required','string'],
+            'password' => ['required','string','min:6','confirmed'], // necesita password_confirmation
+        ]);
+
+        if (!Hash::check($data['current_password'], $user->password)) {
+            return response()->json(['message' => 'La contraseña actual no es correcta.'], 422);
+        }
+
+        $user->update([
+            'password' => Hash::make($data['password']),
+        ]);
+
+        return response()->json(['message' => 'Contraseña actualizada']);
+    }
+
+    public function updateMyAvatar(Request $request)
+    {
+        /** @var User $user */
+        $user = $request->user();
+
+        if (!$request->hasFile('avatar')) {
+            return response()->json(['message' => 'No se ha enviado un archivo'], 400);
+        }
+
+        $file = $request->file('avatar');
+        $ext = strtolower($file->getClientOriginalExtension());
+        if (!in_array($ext, ['jpg','jpeg','png','webp'])) {
+            return response()->json(['message' => 'Formato no permitido'], 422);
+        }
+
+        $filename = time() . '_' . $user->id . '.jpg';
+        $path = public_path('images/' . $filename);
+
+        $manager = new ImageManager(new Driver());
+        $manager->read($file->getPathname())
+            ->cover(320, 320)
+            ->toJpeg(75)
+            ->save($path);
+
+        $user->avatar = $filename;
+        $user->save();
+
+        return response()->json([
+            'message' => 'Avatar actualizado',
+            'avatar' => $filename,
+            'user' => $user->fresh()->load('veterinaria')
+        ]);
     }
 
     public function logout(Request $request)
