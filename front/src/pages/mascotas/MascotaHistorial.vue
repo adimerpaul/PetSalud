@@ -69,7 +69,11 @@
               <q-btn dense flat round icon="edit" color="primary" @click.stop="openEdit(h)">
                 <q-tooltip>Editar</q-tooltip>
               </q-btn>
-<!--              <q-btn dense flat round icon="delete" color="negative" @click.stop="askDelete(h)">-->
+              <q-btn dense flat round icon="medical_services" color="teal" @click.stop="openTratamientos(h)">
+                <q-tooltip>Tratamientos</q-tooltip>
+              </q-btn>
+
+              <!--              <q-btn dense flat round icon="delete" color="negative" @click.stop="askDelete(h)">-->
 <!--                <q-tooltip>Eliminar</q-tooltip>-->
 <!--              </q-btn>-->
             </div>
@@ -368,20 +372,29 @@
         </q-card-section>
       </q-card>
     </q-dialog>
+    <tratamientos-dialog
+      v-model="dialogTrat"
+      :historial="tratHistorial"
+      @updated="load"
+    />
 
   </q-card>
 </template>
 
 <script>
 import moment from 'moment'
+import TratamientosDialog from 'components/TratamientosDialog.vue'
 
 export default {
   name: 'MascotaHistorial',
+  components: { TratamientosDialog },
   props: {
     mascota: { type: Object, required: true }
   },
   data () {
     return {
+      dialogTrat: false,
+      tratHistorial: null,
       loading: false,
       saving: false,
       historiales: [],
@@ -411,6 +424,10 @@ export default {
     if (this.mascota?.id) this.load()
   },
   methods: {
+    openTratamientos (h) {
+      this.tratHistorial = h
+      this.dialogTrat = true
+    },
     blankForm () {
       return {
         id: null,
