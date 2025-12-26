@@ -53,13 +53,17 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('productos/{id}', [ProductoController::class, 'destroy']);
     Route::post('productos/{id}/imagen', [ProductoController::class, 'imagen']);
 
-    Route::post('tratamientos', [TratamientoController::class,'store']);
-    Route::put('tratamientos/{id}', [TratamientoController::class,'update']);
-    Route::delete('tratamientos/{id}', [TratamientoController::class,'destroy']);
+    Route::get('/historiales/{historialId}/tratamientos', [TratamientoController::class, 'indexByHistorial']);
 
-    Route::post('tratamiento-productos', [TratamientoProductoController::class,'store']);
-    Route::put('tratamiento-productos/{id}', [TratamientoProductoController::class,'update']);
-    Route::delete('tratamiento-productos/{id}', [TratamientoProductoController::class,'destroy']);
+// CRUD tratamientos (con productos incluidos)
+    Route::post('/tratamientos', [TratamientoController::class, 'store']);
+    Route::put('/tratamientos/{id}', [TratamientoController::class, 'update']);
+    Route::delete('/tratamientos/{id}', [TratamientoController::class, 'destroy']);
+
+// opcional CRUD productos del tratamiento (si deseas mantenerlo)
+    Route::post('/tratamiento-productos', [TratamientoProductoController::class,'store']);
+    Route::put('/tratamiento-productos/{id}', [TratamientoProductoController::class,'update']);
+    Route::delete('/tratamiento-productos/{id}', [TratamientoProductoController::class,'destroy']);
 });
 Route::get('/historiales/{id}/pdf', [HistorialClinicoController::class, 'pdf']);
 

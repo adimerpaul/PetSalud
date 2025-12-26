@@ -13,8 +13,12 @@ return new class extends Migration
     {
         Schema::create('tratamientos', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('historial_clinico_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('user_id')->nullable();
+//            $table->foreignId('historial_clinico_id')->constrained()->cascadeOnDelete();
+//            $table->foreignId('user_id')->nullable();
+            $table->unsignedBigInteger('historial_clinico_id');
+            $table->unsignedBigInteger('user_id')->nullable();
+            $table->foreign('historial_clinico_id')->references('id')->on('historiales_clinicos')->cascadeOnDelete();
+            $table->foreign('user_id')->references('id')->on('users');
 
             $table->date('fecha')->nullable();
             $table->text('observaciones')->nullable();

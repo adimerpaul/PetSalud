@@ -29,6 +29,6 @@ class TratamientoProducto extends Model
 
     public function tratamiento()
     {
-        return $this->belongsTo(Tratamiento::class);
+        return $this->belongsTo(Tratamiento::class, 'tratamiento_id');
     }
 }
