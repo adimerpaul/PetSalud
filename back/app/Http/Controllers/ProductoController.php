@@ -24,7 +24,8 @@ class ProductoController extends Controller
 
         if ($request->filter) {
             $q->where('nombre', 'like', "%{$request->filter}%")
-                ->orWhere('codigo', 'like', "%{$request->filter}%");
+                ->orWhere('codigo', 'like', "%{$request->filter}%")
+                ->orWhere('tipo', 'like', "%{$request->filter}%");
         }
 
         if ($request->tipo) {

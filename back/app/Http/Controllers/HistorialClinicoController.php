@@ -12,7 +12,7 @@ class HistorialClinicoController extends Controller
     {
         return HistorialClinico::with('tratamientos')
             ->where('mascota_id',$mascotaId)
-            ->orderByDesc('fecha')
+            ->orderByDesc('id')
             ->get();
     }
 

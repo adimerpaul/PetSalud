@@ -20,7 +20,7 @@ return new class extends Migration
             $table->foreign('historial_clinico_id')->references('id')->on('historiales_clinicos')->cascadeOnDelete();
             $table->foreign('user_id')->references('id')->on('users');
 
-            $table->date('fecha')->nullable();
+            $table->dateTime('fecha')->nullable();
             $table->text('observaciones')->nullable();
             $table->text('comentario')->nullable();
             $table->decimal('costo',10,2)->default(0);

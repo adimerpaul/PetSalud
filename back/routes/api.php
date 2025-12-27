@@ -9,6 +9,7 @@ use App\Http\Controllers\HistorialClinicoController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\TratamientoController;
 use App\Http\Controllers\TratamientoProductoController;
+use App\Http\Controllers\SaleController;
 
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
@@ -60,11 +61,21 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/tratamientos', [TratamientoController::class, 'store']);
     Route::put('/tratamientos/{id}', [TratamientoController::class, 'update']);
     Route::delete('/tratamientos/{id}', [TratamientoController::class, 'destroy']);
+//    http://localhost:8000/api/tratamientos?fecha=2025-12-26
+    Route::get('/tratamientos', [TratamientoController::class, 'index']);
 
 // opcional CRUD productos del tratamiento (si deseas mantenerlo)
     Route::post('/tratamiento-productos', [TratamientoProductoController::class,'store']);
     Route::put('/tratamiento-productos/{id}', [TratamientoProductoController::class,'update']);
     Route::delete('/tratamiento-productos/{id}', [TratamientoProductoController::class,'destroy']);
+//    http://localhost:8000/api/tratamientos/pagado/1
+    Route::put('/tratamientos/pagado/{tratmiento}', [TratamientoController::class, 'filterByPagado']);
+
+    Route::get('/sales', [SaleController::class, 'index']);
+    Route::get('/sales/{id}', [SaleController::class, 'show']);
+    Route::post('/sales', [SaleController::class, 'store']);
+    Route::put('/sales/{id}', [SaleController::class, 'update']);
+    Route::put('/sales/{id}/anular', [SaleController::class, 'anular']);
 });
 Route::get('/historiales/{id}/pdf', [HistorialClinicoController::class, 'pdf']);
 //http://localhost:8000/api/tratamientos/3/pdf

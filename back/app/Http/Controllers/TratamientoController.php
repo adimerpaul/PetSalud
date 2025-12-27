@@ -10,6 +10,27 @@ use Barryvdh\DomPDF\Facade\Pdf;
 
 class TratamientoController extends Controller
 {
+//http://localhost:8000/api/tratamientos/pagado/1 PUT update
+    function filterByPagado(Request $r, $tratamientoId)
+    {
+        Tratamiento::findOrFail($tratamientoId)->update([
+            'pagado' => (bool)$r->pagado
+        ]);
+
+    }
+    function index(Request $r)
+    {
+        $q = Tratamiento::with(['productos.producto','user','historial.mascota']);
+
+        if ($r->fecha) {
+            $q->whereDate('fecha', $r->fecha);
+        }
+
+        $q->orderByDesc('fecha')->orderByDesc('id');
+
+        return $q->get();
+
+    }
     public function indexByHistorial($historialId)
     {
         $items = Tratamiento::with(['productos.producto'])
@@ -39,7 +60,7 @@ class TratamientoController extends Controller
             $t = Tratamiento::create([
                 'historial_clinico_id' => $r->historial_id,
                 'user_id' => auth()->id(),
-                'fecha' => $r->fecha,
+                'fecha' => date('Y-m-d H:i:s'),
                 'comentario' => $r->comentario,
                 'observaciones' => $r->observaciones,
                 'pagado' => (bool) $r->pagado,
