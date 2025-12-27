@@ -2,7 +2,7 @@
   <q-dialog v-model="model" persistent>
     <q-card style="width: 1100px; max-width: 98vw;">
       <!-- HEADER -->
-      <q-card-section class="row items-center q-col-gutter-sm">
+      <q-card-section class="row items-center">
         <q-avatar color="teal" text-color="white" icon="medical_services" />
         <div class="col">
           <div class="text-subtitle1 text-weight-bold">Tratamientos</div>
@@ -48,7 +48,7 @@
                       <q-item-label class="text-weight-medium">
                         {{ fmtDate(t.fecha) }}
                         <q-badge class="q-ml-sm" color="teal">
-                          Bs {{ money(t.costo) }}
+                          Bs {{ money(calcTotal(t)) }}
                         </q-badge>
                         <q-badge v-if="t.pagado" class="q-ml-xs" color="positive">Pagado</q-badge>
                       </q-item-label>
@@ -62,9 +62,15 @@
 
                     <q-item-section side top>
                       <div class="row q-gutter-xs">
+                        <!-- IMPRIMIR -->
+                        <q-btn dense flat round icon="print" color="teal" @click.stop="print(t.id)">
+                          <q-tooltip>Imprimir</q-tooltip>
+                        </q-btn>
+
                         <q-btn dense flat round icon="edit" color="primary" @click.stop="openEdit(t)">
                           <q-tooltip>Editar</q-tooltip>
                         </q-btn>
+
                         <q-btn dense flat round icon="delete" color="negative" @click.stop="askDelete(t)">
                           <q-tooltip>Eliminar</q-tooltip>
                         </q-btn>
@@ -94,6 +100,7 @@
                   @click="load"
                 />
               </q-card-section>
+
               <q-separator />
 
               <q-card-section class="q-pa-sm">
@@ -102,74 +109,126 @@
                     <div class="col-12 col-md-4">
                       <q-input v-model="form.fecha" type="date" outlined dense stack-label label="Fecha" />
                     </div>
+<!--                    <div class="col-12 col-md-4">-->
+<!--                      <q-toggle v-model="form.pagado" label="Pagado" />-->
+<!--                    </div>-->
                     <div class="col-12 col-md-4">
-                      <q-toggle v-model="form.pagado" label="Pagado" />
-                    </div>
-                    <div class="col-12 col-md-4">
-                      <q-input :model-value="money(totalProductos)" outlined dense stack-label label="Total productos (Bs)" readonly />
+<!--                      <q-input :model-value="money(totalProductos)" outlined dense stack-label label="Total productos (Bs)" readonly />-->
+<!--                      costo-->
+                      <q-input v-model="form.costo" type="number" step="0.01" outlined dense stack-label label="Costo total (Bs)" />
                     </div>
                   </div>
 
                   <q-input v-model="form.comentario" outlined dense stack-label label="Comentario" />
                   <q-input v-model="form.observaciones" type="textarea" autogrow outlined dense stack-label label="Observaciones" />
 
-                  <!-- PRODUCTOS -->
+                  <!-- PRODUCTOS: COMBO + TABLA -->
                   <q-card flat bordered class="bg-grey-1">
                     <q-card-section class="row items-center q-col-gutter-sm">
                       <q-icon name="inventory_2" />
                       <div class="text-subtitle2 text-weight-bold">Productos del tratamiento</div>
                       <q-space />
-                      <q-btn color="teal" icon="add" label="Agregar producto" no-caps dense @click="addProducto" />
                     </q-card-section>
+
                     <q-separator />
+
                     <q-card-section class="q-pa-sm">
+                      <!-- selector -->
+                      <div class="row q-col-gutter-sm items-center q-mb-sm">
+                        <div class="col-12 col-md-9">
+                          <q-select
+                            v-model="selectedProductoId"
+                            :options="productosOptions"
+                            :option-label="row => row.nombre + (row.tipo ? ' (' + row.tipo + ')' : '')"
+                            option-value="id"
+                            emit-value
+                            map-options
+                            outlined
+                            dense
+                            label="Selecciona un producto"
+                            use-input
+                            input-debounce="300"
+                            @filter="filterProductos"
+                            :disable="saving"
+                            clearable
+                          />
+<!--                          <pre>{{productosOptions}}</pre>-->
+                        </div>
+                        <div class="col-12 col-md-3">
+                          <q-btn
+                            color="teal"
+                            icon="add"
+                            label="Agregar"
+                            no-caps
+                            class="full-width"
+                            :disable="!selectedProductoId || saving"
+                            @click="addSelectedProducto"
+                          />
+                        </div>
+                      </div>
+
                       <q-banner v-if="form.productos.length === 0" rounded class="bg-white text-grey-8">
                         <template v-slot:avatar><q-icon name="info" /></template>
-                        Sin productos. Presiona “Agregar producto”.
+                        Sin productos. Selecciona uno arriba y presiona “Agregar”.
                       </q-banner>
 
-                      <div v-for="(p, i) in form.productos" :key="i" class="q-mb-sm">
-                        <q-card flat bordered class="bg-white">
-                          <q-card-section class="row items-center q-col-gutter-sm">
-                            <div class="col">
-                              <div class="text-weight-medium">Producto #{{ i + 1 }}</div>
-                              <div class="text-caption text-grey-7">
-                                Subtotal: Bs {{ money(subtotal(p)) }}
+                      <!-- tabla/lista -->
+                      <q-list v-else bordered separator class="rounded-borders bg-white">
+                        <q-item v-for="(p, i) in form.productos" :key="i">
+                          <q-item-section>
+                            <q-item-label class="text-weight-medium">
+                              {{ productoName(p.producto_id) }}
+                            </q-item-label>
+
+                            <div class="row q-col-gutter-sm q-mt-xs">
+                              <div class="col-6 col-md-4">
+                                <q-input
+                                  v-model.number="p.cantidad"
+                                  type="number"
+                                  step="0.01"
+                                  outlined
+                                  dense
+                                  stack-label
+                                  label="Cantidad"
+                                />
+                              </div>
+                              <div class="col-6 col-md-4">
+                                <q-input
+                                  v-model.number="p.precio"
+                                  type="number"
+                                  step="0.01"
+                                  outlined
+                                  dense
+                                  stack-label
+                                  label="Precio (Bs)"
+                                />
+                              </div>
+                              <div class="col-12 col-md-4">
+                                <q-input
+                                  :model-value="money(subtotal(p))"
+                                  outlined
+                                  dense
+                                  stack-label
+                                  label="Subtotal (Bs)"
+                                  readonly
+                                />
                               </div>
                             </div>
-                            <div class="col-auto">
-                              <q-btn dense flat round icon="delete" color="negative" @click="removeProducto(i)" />
-                            </div>
-                          </q-card-section>
+                          </q-item-section>
 
-                          <q-separator />
+                          <q-item-section side top>
+                            <q-btn dense flat round icon="delete" color="negative" @click="removeProducto(i)">
+                              <q-tooltip>Quitar</q-tooltip>
+                            </q-btn>
+                          </q-item-section>
+                        </q-item>
+                      </q-list>
 
-                          <q-card-section class="row q-col-gutter-sm">
-                            <div class="col-12 col-md-6">
-                              <q-select
-                                v-model="p.producto"
-                                :options="productosOptions"
-                                option-label="nombre"
-                                option-value="id"
-                                emit-value
-                                map-options
-                                outlined
-                                dense
-                                stack-label
-                                label="Producto"
-                                use-input
-                                input-debounce="300"
-                                @filter="filterProductos"
-                              />
-                            </div>
-                            <div class="col-6 col-md-3">
-                              <q-input v-model.number="p.cantidad" type="number" step="0.01" outlined dense stack-label label="Cantidad" />
-                            </div>
-                            <div class="col-6 col-md-3">
-                              <q-input v-model.number="p.precio" type="number" step="0.01" outlined dense stack-label label="Precio (Bs)" />
-                            </div>
-                          </q-card-section>
-                        </q-card>
+                      <div class="row items-center q-mt-sm">
+                        <q-space />
+                        <div class="text-weight-bold">
+                          Total: Bs {{ money(totalProductos) }}
+                        </div>
                       </div>
                     </q-card-section>
                   </q-card>
@@ -223,8 +282,10 @@ export default {
       items: [],
 
       isEdit: false,
-      productosOptions: [],
+
       productosAll: [],
+      productosOptions: [],
+      selectedProductoId: null,
 
       form: this.blank()
     }
@@ -255,25 +316,41 @@ export default {
         comentario: '',
         observaciones: '',
         pagado: false,
-        productos: []
+        productos: [] // [{producto_id,cantidad,precio}]
       }
     },
+
     fmtDate (d) {
       if (!d) return '-'
       return moment(d).format('DD/MM/YYYY')
     },
+
     money (n) {
       const x = Number(n || 0)
       return x.toFixed(2)
     },
+
     subtotal (p) {
       const c = Number(p?.cantidad || 0)
       const pr = Number(p?.precio || 0)
       return c * pr
     },
 
+    calcTotal (t) {
+      const prods = (t?.productos || [])
+      return prods.reduce((acc, p) => {
+        const c = Number(p?.cantidad || 0)
+        const pr = Number(p?.precio || 0)
+        return acc + (c * pr)
+      }, 0)
+    },
+
     close () {
       this.model = false
+    },
+
+    print (id) {
+      window.open(`${this.$url}/tratamientos/${id}/pdf`, '_blank')
     },
 
     async load () {
@@ -290,13 +367,11 @@ export default {
     },
 
     async loadProductos () {
-      // Ajusta si tu endpoint de productos usa paginación/filters
       try {
-        const { data } = await this.$axios.get('/productos', { params: { per_page: 200 } })
-        // si tu api devuelve {data:[], ...} cambia acá:
+        const { data } = await this.$axios.get('/productosAll')
         const list = Array.isArray(data) ? data : (data?.data || [])
         this.productosAll = list
-        this.productosOptions = list.slice(0, 50)
+        this.productosOptions = list
       } catch (e) {
         // no bloquear
       }
@@ -305,19 +380,33 @@ export default {
     filterProductos (val, update) {
       update(() => {
         const needle = (val || '').toLowerCase()
+        // this.productosOptions = this.productosAll
+        //   .filter(p => (p.nombre || '').toLowerCase().includes(needle))
+        // filtrar por tipo mas
         this.productosOptions = this.productosAll
-          .filter(p => (p.nombre || '').toLowerCase().includes(needle))
-          .slice(0, 50)
+          .filter(p => {
+            const nameMatch = (p.nombre || '').toLowerCase().includes(needle)
+            const tipoMatch = (p.tipo || '').toLowerCase().includes(needle)
+            return nameMatch || tipoMatch
+          })
       })
+    },
+
+    productoName (productoId) {
+      const p = this.productosAll.find(x => Number(x.id) === Number(productoId))
+      return p?.nombre || `Producto #${productoId || '-'}`
     },
 
     openCreate () {
       this.isEdit = false
       this.form = this.blank()
+      this.selectedProductoId = null
     },
 
     openEdit (t) {
       this.isEdit = true
+      this.selectedProductoId = null
+
       this.form = {
         id: t.id,
         fecha: t.fecha || moment().format('YYYY-MM-DD'),
@@ -325,8 +414,8 @@ export default {
         observaciones: t.observaciones || '',
         pagado: !!t.pagado,
         productos: (t.productos || []).map(pp => ({
-          id: pp.id,
-          producto: pp.producto_id || pp.producto?.id || null,
+          id: pp.id, // opcional si lo mandas
+          producto_id: pp.producto_id || pp.producto?.id || null,
           cantidad: Number(pp.cantidad || 1),
           precio: Number(pp.precio || 0)
         }))
@@ -336,14 +425,28 @@ export default {
     resetForm () {
       this.isEdit = false
       this.form = this.blank()
+      this.selectedProductoId = null
     },
 
-    addProducto () {
+    addSelectedProducto () {
+      const id = Number(this.selectedProductoId)
+      if (!id) return
+
+      // evitar duplicados: si ya existe, no agregar (o suma cantidad si quieres)
+      const exists = (this.form.productos || []).find(p => Number(p.producto_id) === id)
+      if (exists) {
+        this.$alert?.info?.('Este producto ya está agregado.')
+        this.selectedProductoId = null
+        return
+      }
+
       this.form.productos.push({
-        producto: null,
+        producto_id: id,
         cantidad: 1,
         precio: 0
       })
+
+      this.selectedProductoId = null
     },
 
     removeProducto (i) {
@@ -353,7 +456,6 @@ export default {
     async save () {
       if (!this.historial?.id) return
 
-      // payload para backend (solo ids + cantidad + precio)
       const payload = {
         historial_id: this.historial.id,
         fecha: this.form.fecha,
@@ -361,7 +463,7 @@ export default {
         observaciones: this.form.observaciones,
         pagado: this.form.pagado,
         productos: (this.form.productos || []).map(p => ({
-          producto_id: p.producto,
+          producto_id: Number(p.producto_id),
           cantidad: Number(p.cantidad || 0),
           precio: Number(p.precio || 0)
         }))

@@ -1,10 +1,13 @@
 <template>
   <q-card flat bordered>
     <q-form @submit.prevent="submit">
-      <q-card-section>
+      <q-card-section class="row items-center">
         <q-btn @click="$router.push('/mascotas')" label="Atrás" color="primary" icon="arrow_back" no-caps size="10px" />
 
         <div class="text-h6 q-mt-sm">{{ isEdit ? 'Editar Mascota' : 'Nueva Mascota' }}</div>
+        <q-space/>
+        <q-btn v-if="isEdit" @click="imprimirMacota()" label="Imprimir Ficha" color="secondary" icon="print" no-caps size="10px" class="q-ml-sm"/>
+
 
         <q-card flat bordered class="q-mt-sm">
           <q-card-section>
@@ -173,6 +176,11 @@ export default {
     this.calcEdad()
   },
   methods: {
+    imprimirMacota () {
+      // <!--        Route::get('/mascotas/{id}/pdf', [MascotaController::class, 'pdf']);-->
+      const url = `${this.$url}/mascotas/${this.$route.params.id}/pdf`
+      window.open(url, '_blank')
+    },
     calcEdad () {
       if (!this.mascota.fecha_nac) return
       const today = moment()
