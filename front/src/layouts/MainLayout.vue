@@ -194,6 +194,26 @@
             <q-item-label class="text-white">Mascotas</q-item-label>
           </q-item-section>
         </q-item>
+<!--        {-->
+<!--        path: '/ventas',-->
+<!--        component: () => import('pages/ventas/VentasIndex.vue'),-->
+<!--        meta: { requiresAuth: true }-->
+<!--        },-->
+<!--        {-->
+<!--        path: '/ventas/create',-->
+<!--        component: () => import('pages/ventas/VentaCreate.vue'),-->
+<!--        meta: { requiresAuth: true }-->
+<!--        },-->
+        <q-item dense to="/ventas" exact clickable class="menu-item" active-class="menu-active" v-close-popup >
+          <q-item-section avatar>
+            <q-icon name="point_of_sale" class="text-white"/>
+          </q-item-section>
+          <q-item-section>
+            <q-item-label class="text-white">Ventas</q-item-label>
+          </q-item-section>
+        </q-item>
+        <q-separator color="white" inset class="q-my-sm" />
+        <!-- FOOTER -->
         <div class="q-pa-md">
           <div class="text-grey-3 text-caption">
             PetSalud v{{ $version }}

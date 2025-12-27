@@ -52,10 +52,10 @@
               <q-btn :loading="loading" flat dense no-caps icon="shopping_cart" label="Ventas"
                      :color="tab === 'ventas' ? 'white' : 'black'"/>
             </q-tab>
-            <q-tab name="complementos" :class="{'bg-green text-white': tab === 'complementos'}">
-              <q-btn :loading="loading" flat dense no-caps icon="local_hospital" label="Complementos"
-                     :color="tab === 'complementos' ? 'white' : 'black'"/>
-            </q-tab>
+<!--            <q-tab name="complementos" :class="{'bg-green text-white': tab === 'complementos'}">-->
+<!--              <q-btn :loading="loading" flat dense no-caps icon="local_hospital" label="Complementos"-->
+<!--                     :color="tab === 'complementos' ? 'white' : 'black'"/>-->
+<!--            </q-tab>-->
             <q-tab name="certificados" :class="{'bg-red text-white': tab === 'certificados'}">
               <q-btn :loading="loading" flat dense no-caps icon="receipt" label="Certificados"
                      :color="tab === 'certificados' ? 'white' : 'black'"/>

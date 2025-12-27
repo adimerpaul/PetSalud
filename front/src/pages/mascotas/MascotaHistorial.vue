@@ -92,7 +92,7 @@
     <!-- DIALOG FORM -->
     <q-dialog v-model="dialog" persistent>
       <q-card style="width: 980px; max-width: 98vw;">
-        <q-card-section class="row items-center q-col-gutter-sm">
+        <q-card-section class="row items-center ">
           <q-avatar color="primary" text-color="white" :icon="isEdit ? 'edit_note' : 'post_add'" />
           <div class="col">
             <div class="text-subtitle1 text-weight-bold">
@@ -115,16 +115,16 @@
 
             <!-- FECHA -->
             <div class="row q-col-gutter-sm">
-              <div class="col-12 col-md-3">
-                <q-input
-                  v-model="form.fecha"
-                  type="date"
-                  outlined
-                  dense
-                  stack-label
-                  label="Fecha"
-                />
-              </div>
+<!--              <div class="col-12 col-md-3">-->
+<!--                <q-input-->
+<!--                  v-model="form.fecha"-->
+<!--                  type="date"-->
+<!--                  outlined-->
+<!--                  dense-->
+<!--                  stack-label-->
+<!--                  label="Fecha"-->
+<!--                />-->
+<!--              </div>-->
 
               <div class="col-12 col-md-3">
                 <q-input v-model.number="form.peso" type="number" step="0.1" outlined dense stack-label label="Peso (kg)" />

@@ -11,6 +11,16 @@ const routes = [
       { path: '/mascotas/create', component: () => import('pages/mascotas/MascotaCreate.vue'), meta: { requiresAuth: true } },
       { path: '/mascotas/:id', component: () => import('pages/mascotas/MascotaShow.vue'), meta: { requiresAuth: true } },
       { path: '/productos', component: () => import('pages/productos/Productos.vue'), meta: { requiresAuth: true } },
+      {
+        path: '/ventas',
+        component: () => import('pages/ventas/VentasIndex.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: '/ventas/add',
+        component: () => import('pages/ventas/VentaCreate.vue'),
+        meta: { requiresAuth: true }
+      },
     ]
   },
   {
