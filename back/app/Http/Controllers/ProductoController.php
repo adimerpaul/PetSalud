@@ -8,6 +8,16 @@ use Illuminate\Support\Facades\Storage;
 
 class ProductoController extends Controller
 {
+    function all(Request $request)
+    {
+        $q = Producto::query();
+
+        if ($request->tipo) {
+            $q->where('tipo', $request->tipo);
+        }
+
+        return $q->orderBy('nombre', 'asc')->get();
+    }
     public function index(Request $request)
     {
         $q = Producto::query();

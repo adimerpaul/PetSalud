@@ -5,9 +5,22 @@ namespace App\Http\Controllers;
 use App\Models\Mascota;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
-
+use Barryvdh\DomPDF\Facade\Pdf;
 class MascotaController extends Controller
 {
+    public function pdf($id)
+    {
+        $mascota = Mascota::with('veterinaria')->findOrFail($id);
+
+        // (opcional) seguridad multi-veterinaria:
+        // if (auth()->check() && auth()->user()->veterinaria_id && $mascota->veterinaria_id != auth()->user()->veterinaria_id) {
+        //     abort(403, 'No autorizado');
+        // }
+
+        return Pdf::loadView('pdf.mascota', compact('mascota'))
+            ->setPaper('A4')
+            ->stream('mascota.pdf');
+    }
     public function index(Request $request)
     {
         $filter = $request->get('filter', '');

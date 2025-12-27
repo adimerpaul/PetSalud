@@ -48,6 +48,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/historiales/{id}', [HistorialClinicoController::class, 'destroy']);
 
     Route::get('productos', [ProductoController::class, 'index']);
+    Route::get('productosAll', [ProductoController::class, 'all']);
     Route::post('productos', [ProductoController::class, 'store']);
     Route::put('productos/{id}', [ProductoController::class, 'update']);
     Route::delete('productos/{id}', [ProductoController::class, 'destroy']);
@@ -66,4 +67,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/tratamiento-productos/{id}', [TratamientoProductoController::class,'destroy']);
 });
 Route::get('/historiales/{id}/pdf', [HistorialClinicoController::class, 'pdf']);
+//http://localhost:8000/api/tratamientos/3/pdf
+Route::get('/tratamientos/{id}/pdf', [TratamientoController::class, 'pdf']);
+Route::get('/mascotas/{id}/pdf', [MascotaController::class, 'pdf']);
+
 

@@ -57,8 +57,9 @@ class HistorialClinicoController extends Controller
     public function pdf($id)
     {
         $historial = HistorialClinico::with([
-            'mascota','tratamientos','user','mascota.veterinaria'
+            'mascota','tratamientos.tratamientoProductos.producto','user','mascota.veterinaria'
         ])->findOrFail($id);
+//        return $historial;
 
         return Pdf::loadView('pdf.historial',compact('historial'))
             ->setPaper('A4')

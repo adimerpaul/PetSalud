@@ -88,6 +88,7 @@
         table.main tbody td{
             padding:6px;
             border-bottom:1px solid #eee;
+            vertical-align: top;
         }
         table.main tbody tr:nth-child(even){
             background:#f5f6f8;
@@ -95,6 +96,22 @@
 
         .w-fecha{ width:90px; }
         .w-costo{ width:90px; text-align:right; }
+
+        /* ✅ lista comprimida de productos */
+        .prods{
+            font-size: 9.6px;
+            line-height: 1.15;
+            margin: 0;
+            padding: 0;
+        }
+        .prods div{
+            margin: 0;
+            padding: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 320px; /* ajusta si quieres más/menos */
+        }
 
         .footer{
             margin-top:20px;
@@ -128,6 +145,30 @@
     $vet = $m->veterinaria ?? null;
 
     $v = fn($x) => ($x === null || $x === '' ? '-' : $x);
+
+    // helper: formatear productos comprimidos
+    $fmtProds = function($t) {
+        // soporta snake_case y camelCase
+        $pps = $t->tratamiento_productos ?? $t->tratamientoProductos ?? [];
+
+        if (!$pps || count($pps) === 0) {
+            // compatibilidad (si antes usabas medicamento)
+            if (!empty($t->medicamento)) return [$t->medicamento];
+            return [];
+        }
+
+        $out = [];
+        foreach ($pps as $pp) {
+            $name = $pp->producto->nombre ?? '-';
+            $cant = isset($pp->cantidad) ? (float)$pp->cantidad : 0;
+            $prec = isset($pp->precio) ? (float)$pp->precio : 0;
+
+            // formato comprimido
+            // Ej: "Ankofen 50 ml (1 x 0.00)"
+            $out[] = trim($name) . ' (' . rtrim(rtrim(number_format($cant,2,'.',''), '0'), '.') . ' x ' . number_format($prec,2,'.','') . ')';
+        }
+        return $out;
+    };
 @endphp
 
 <div class="title">HISTORIAL CLÍNICO</div>
@@ -147,10 +188,7 @@
             <tr><td class="label">Edad:</td><td>{{ $v($m->edad) }}</td></tr>
             <tr><td class="label">Peso:</td><td>{{ $v($historial->peso) }} {{ $historial->peso ? 'kg' : '' }}</td></tr>
             <tr><td class="label">Anamnesis:</td><td>{{ $v($historial->anamnesis) }}</td></tr>
-{{--            observaciones--}}
-            <tr>
-                <td class="label">Observaciones:</td><td>{{ $v($historial->observaciones) }}</td>
-            </tr>
+            <tr><td class="label">Observaciones:</td><td>{{ $v($historial->observaciones) }}</td></tr>
         </table>
     </div>
 
@@ -189,46 +227,14 @@
             Triple: {{ $v($historial->triple) }}
         </div>
 
-{{--        <div style="margin-top:6px">--}}
-{{--            <div class="row clearfix">--}}
-{{--                <div class="col col-50">--}}
-{{--                    <div><b>Esterilizado:</b> {{ $v($historial->esterilizado) }}</div>--}}
-{{--                    <div><b>Desparasitación:</b> {{ $v($historial->desparasitacion) }}</div>--}}
-{{--                    <div><b>Ecografía:</b> {{ $v($historial->ecografia) }}</div>--}}
-{{--                </div>--}}
-{{--                <div class="col col-50">--}}
-{{--                    <div><b>Rayos X:</b> {{ $v($historial->rayox) }}</div>--}}
-{{--                    <div><b>Laboratorio:</b> {{ $v($historial->laboratorio) }}</div>--}}
-{{--                    <div><b>Pronóstico:</b> {{ $v($historial->pronostico) }}</div>--}}
-{{--                </div>--}}
-{{--            </div>--}}
-
-{{--            <div style="margin-top:6px">--}}
-{{--                <b>Diagnóstico:</b> {{ $v($historial->diagnostico) }}--}}
-{{--            </div>--}}
-{{--        </div>--}}
-        <table>
-            <tr>
-                <td class="label">Esterilizado:</td><td>{{ $v($historial->esterilizado) }}</td>
-            </tr>
-            <tr>
-                <td class="label">Desparasitación:</td><td>{{ $v($historial->desparasitacion) }}</td>
-            </tr>
-            <tr>
-                <td class="label">Ecografía:</td><td>{{ $v($historial->ecografia) }}</td>
-            </tr>
-            <tr>
-                <td class="label">Rayos X:</td><td>{{ $v($historial->rayox) }}</td>
-            </tr>
-            <tr>
-                <td class="label">Laboratorio:</td><td>{{ $v($historial->laboratorio) }}</td>
-            </tr>
-            <tr>
-                <td class="label">Pronóstico:</td><td>{{ $v($historial->pronostico) }}</td>
-            </tr>
-            <tr>
-                <td class="label">Diagnóstico:</td><td>{{ $v($historial->diagnostico) }}</td>
-            </tr>
+        <table style="margin-top:6px">
+            <tr><td class="label">Esterilizado:</td><td>{{ $v($historial->esterilizado) }}</td></tr>
+            <tr><td class="label">Desparasitación:</td><td>{{ $v($historial->desparasitacion) }}</td></tr>
+            <tr><td class="label">Ecografía:</td><td>{{ $v($historial->ecografia) }}</td></tr>
+            <tr><td class="label">Rayos X:</td><td>{{ $v($historial->rayox) }}</td></tr>
+            <tr><td class="label">Laboratorio:</td><td>{{ $v($historial->laboratorio) }}</td></tr>
+            <tr><td class="label">Pronóstico:</td><td>{{ $v($historial->pronostico) }}</td></tr>
+            <tr><td class="label">Diagnóstico:</td><td>{{ $v($historial->diagnostico) }}</td></tr>
         </table>
     </div>
 </div>
@@ -241,19 +247,32 @@
         <th class="w-fecha">Fecha</th>
         <th>Observaciones</th>
         <th>Comentario</th>
-        <th>Medicamentos</th>
+        <th>Productos</th>
         <th class="w-costo">Costo</th>
     </tr>
     </thead>
     <tbody>
     @forelse($historial->tratamientos as $t)
+        @php
+            $lines = $fmtProds($t);
+        @endphp
         <tr>
             <td>{{ \Carbon\Carbon::parse($t->fecha ?? $historial->fecha)->format('d/m/Y') }}</td>
             <td>{{ $v($t->observaciones ?? $t->indicaciones) }}</td>
             <td>{{ $v($t->comentario) }}</td>
-            <td>{{ $v($t->medicamento) }}</td>
+            <td>
+                @if(count($lines))
+                    <div class="prods">
+                        @foreach($lines as $ln)
+                            <div>• {{ $ln }}</div>
+                        @endforeach
+                    </div>
+                @else
+                    <span class="muted">-</span>
+                @endif
+            </td>
             <td class="w-costo">
-                {{ $t->costo !== null ? number_format($t->costo,2).' Bs' : '-' }}
+                {{ $t->costo !== null ? number_format((float)$t->costo,2).' Bs' : '-' }}
             </td>
         </tr>
     @empty

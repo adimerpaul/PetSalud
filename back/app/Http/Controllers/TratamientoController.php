@@ -3,24 +3,29 @@
 namespace App\Http\Controllers;
 
 use App\Models\Tratamiento;
+use App\Models\TratamientoProducto;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class TratamientoController extends Controller
 {
     public function indexByHistorial($historialId)
     {
-        return Tratamiento::with(['productos.producto'])
+        $items = Tratamiento::with(['productos.producto'])
             ->where('historial_clinico_id', $historialId)
             ->orderByDesc('fecha')
+            ->orderByDesc('id')
             ->get();
+
+        return $items;
     }
 
     public function store(Request $r)
     {
         $r->validate([
             'historial_id' => 'required|integer',
-            'fecha' => 'required|date',
+            'fecha' => 'nullable|date',
             'comentario' => 'nullable|string',
             'observaciones' => 'nullable|string',
             'pagado' => 'nullable|boolean',
@@ -31,40 +36,40 @@ class TratamientoController extends Controller
         ]);
 
         return DB::transaction(function () use ($r) {
-
-            $tratamiento = Tratamiento::create([
+            $t = Tratamiento::create([
                 'historial_clinico_id' => $r->historial_id,
                 'user_id' => auth()->id(),
                 'fecha' => $r->fecha,
-                'observaciones' => $r->observaciones,
                 'comentario' => $r->comentario,
-                'pagado' => (bool)($r->pagado ?? false),
-                'costo' => 0,
+                'observaciones' => $r->observaciones,
+                'pagado' => (bool) $r->pagado,
             ]);
 
             $total = 0;
-            foreach (($r->productos ?? []) as $p) {
-                $cantidad = (float)$p['cantidad'];
-                $precio = (float)$p['precio'];
-                $total += $cantidad * $precio;
 
-                $tratamiento->productos()->create([
+            foreach (($r->productos ?? []) as $p) {
+                $tp = TratamientoProducto::create([
+                    'tratamiento_id' => $t->id,
                     'producto_id' => $p['producto_id'],
-                    'cantidad' => $cantidad,
-                    'precio' => $precio,
+                    'cantidad' => $p['cantidad'],
+                    'precio' => $p['precio'],
                 ]);
+                $total += ((float)$tp->cantidad * (float)$tp->precio);
             }
 
-            $tratamiento->update(['costo' => $total]);
+            // si quieres guardar el total en tratamientos.costo
+            $t->costo = $total;
+            $t->save();
 
-            return $tratamiento->load(['productos.producto']);
+            return $t->load(['productos.producto']);
         });
     }
 
     public function update(Request $r, $id)
     {
         $r->validate([
-            'fecha' => 'required|date',
+            'historial_id' => 'required|integer',
+            'fecha' => 'nullable|date',
             'comentario' => 'nullable|string',
             'observaciones' => 'nullable|string',
             'pagado' => 'nullable|boolean',
@@ -75,33 +80,33 @@ class TratamientoController extends Controller
         ]);
 
         return DB::transaction(function () use ($r, $id) {
-
             $t = Tratamiento::with('productos')->findOrFail($id);
 
             $t->update([
+                'historial_clinico_id' => $r->historial_id,
                 'fecha' => $r->fecha,
-                'observaciones' => $r->observaciones,
                 'comentario' => $r->comentario,
-                'pagado' => (bool)($r->pagado ?? false),
+                'observaciones' => $r->observaciones,
+                'pagado' => (bool) $r->pagado,
             ]);
 
-            // Reemplazar productos
+            // reemplazar productos (simple y seguro)
             $t->productos()->delete();
 
             $total = 0;
-            foreach (($r->productos ?? []) as $p) {
-                $cantidad = (float)$p['cantidad'];
-                $precio = (float)$p['precio'];
-                $total += $cantidad * $precio;
 
-                $t->productos()->create([
+            foreach (($r->productos ?? []) as $p) {
+                $tp = TratamientoProducto::create([
+                    'tratamiento_id' => $t->id,
                     'producto_id' => $p['producto_id'],
-                    'cantidad' => $cantidad,
-                    'precio' => $precio,
+                    'cantidad' => $p['cantidad'],
+                    'precio' => $p['precio'],
                 ]);
+                $total += ((float)$tp->cantidad * (float)$tp->precio);
             }
 
-            $t->update(['costo' => $total]);
+            $t->costo = $total;
+            $t->save();
 
             return $t->load(['productos.producto']);
         });
@@ -109,7 +114,28 @@ class TratamientoController extends Controller
 
     public function destroy($id)
     {
-        Tratamiento::findOrFail($id)->delete();
+        $t = Tratamiento::findOrFail($id);
+        $t->delete();
         return response()->noContent();
+    }
+
+    // ==========================
+    // PDF
+    // ==========================
+    public function pdf($id)
+    {
+//        return $id;
+        $tratamiento = Tratamiento::with([
+            'historial.mascota.veterinaria',
+            'historial.user',
+            'productos.producto',
+            'user'
+        ])->findOrFail($id);
+//        return $tratamiento;
+
+        $pdf = Pdf::loadView('pdf.tratamiento', compact('tratamiento'))
+            ->setPaper('letter', 'portrait');
+
+        return $pdf->stream("tratamiento-{$tratamiento->id}.pdf");
     }
 }
